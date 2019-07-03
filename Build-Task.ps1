@@ -179,6 +179,7 @@ try {
                 }
                 'Nuget' {
 
+                    $PackageSources = @(Get-PackageSource | Where-Object { $_.Name -like "*nuget*"})
                     $PackageDestination = "$PackageTemp/$($Package.Name).$($Package.Version)"
 
                     $InstallPackageParameters = @{
@@ -188,6 +189,7 @@ try {
                         ForceBootstrap   = $true
                         RequiredVersion  = $Package.Version
                         Force            = $true
+                        Source           = $PackageSources[0].Name
                     }
 
                     Write-Host "[NuGet] Installing package $($Package.Name) to $($PackageTemp)"

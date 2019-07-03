@@ -21,7 +21,7 @@ function Build-ConfigurationEntity {
             $Schema = Expand-Schema -PropertyObject $SchemaObject.Properties
             Write-Verbose -Message "$($Schema.GetType()) "
             Write-Verbose -Message ($Schema | ConvertTo-Json -Depth 10)
-            $Configuration = [Newtonsoft.Json.JsonConvert, Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed]::SerializeObject($Schema, $Settings)
+            $Configuration = ($Schema | ConvertTo-Json -Depth 10)
 
             Write-Output $Configuration
     }
