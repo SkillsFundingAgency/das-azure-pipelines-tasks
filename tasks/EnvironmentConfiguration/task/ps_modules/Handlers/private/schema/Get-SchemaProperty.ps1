@@ -56,7 +56,7 @@ function Get-SchemaProperty {
             }
         }
 
-        if (!$TaskVariable -and	$null -ne $PropertyObject.Default) {
+        if (!$TaskVariable -and $null -ne $PropertyObject.Default) {
             Write-Verbose -Message "No environment variable found for [ $VariableName ] and a default value is present in the schema"
             $TaskVariable = $PropertyObject.Default.Value
             Write-Verbose -Message "$($VariableName.ToUpper()): $TaskVariable "
