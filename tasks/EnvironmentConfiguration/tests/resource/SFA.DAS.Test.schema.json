@@ -50,6 +50,10 @@
       "type": "string",
       "default": "default-value",
       "environmentVariable": "PaymentsDefaultValue"
+    },
+    "PaymentsBlankDefault": {
+      "type": "string",
+      "default": ""
     }
   },
   "additionalProperties": false,

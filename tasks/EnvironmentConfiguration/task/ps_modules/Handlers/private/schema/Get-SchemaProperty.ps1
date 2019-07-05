@@ -62,7 +62,7 @@ function Get-SchemaProperty {
             Write-Verbose -Message "Set default value '$TaskVariable'"
         }
 
-        if (!$TaskVariable) {
+        if ($null -eq $TaskVariable) {
             throw "No environment variable found and no default value set in schema"
         }
 
