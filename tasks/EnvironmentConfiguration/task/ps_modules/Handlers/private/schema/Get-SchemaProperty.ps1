@@ -54,26 +54,25 @@ function Get-SchemaProperty {
         Trace-VstsEnteringInvocation $MyInvocation
 
         if ($PropertyObject.ExtensionData.ContainsKey("environmentVariable")) {
-
             $VariableName = $PropertyObject.ExtensionData.Item("environmentVariable").Value
-
             $TaskVariable = Get-VstsTaskVariable -Name $VariableName
 
             if (![string]::IsNullOrEmpty($TaskVariable)) {
                 Write-Verbose "$VariableName found"
                 $TaskVariable = Set-PropertyType -Value $TaskVariable -Type $PSCmdlet.ParameterSetName
             }
-            elseif ($null -ne $PropertyObject.Default) {
-                Write-Verbose -Message "No environment variable found but a default value is present in the schema"
-                $TaskVariable = Set-PropertyType -Value $PropertyObject.Default.Value -Type $PSCmdlet.ParameterSetName
-                Write-Verbose -Message "Set default value '$TaskVariable'"
-            }
-            else {
-                throw "No environment variable found and no default value set in schema"
-            }
-
-            Write-Output $TaskVariable
         }
+
+        if ([string]::IsNullOrEmpty($TaskVariable) -and $null -ne $PropertyObject.Default) {
+            Write-Verbose -Message "No environment variable found but a default value is present in the schema"
+            $TaskVariable = Set-PropertyType -Value $PropertyObject.Default.Value -Type $PSCmdlet.ParameterSetName
+            Write-Verbose -Message "Set default value '$TaskVariable'"
+        }
+        else {
+            throw "No environment variable found and no default value set in schema"
+        }
+
+        Write-Output $TaskVariable
     }
     catch {
         Write-Error -Message "Could not get property from object [ $VariableName ] : $_" -ErrorAction Stop
