@@ -17,8 +17,40 @@ function Get-SchemaProperty {
         [Switch]$AsBool
     )
 
-    try {
+    function Set-PropertyType {
+        param(
+            [string]$Value,
+            [string]$Type
+        )
+        switch ($Type) {
+            'Standard' {
+                Write-Verbose "Leaving as a string"
+                return "$Value"
+            }
 
+            'AsInt' {
+                Write-Verbose "Casting to an int"
+                return [int]$Value
+            }
+
+            'AsNumber' {
+                Write-Verbose "Casting to a decimal"
+                return [Decimal]::Parse($Value)
+            }
+
+            'AsArray' {
+                Write-Verbose "Casting to an array"
+                return @($Value | ConvertFrom-Json)
+            }
+
+            'AsBool' {
+                Write-Verbose "Casting to a boolean"
+                return "$Value".ToLower() -in '1', 'true'
+            }
+        }
+    }
+
+    try {
         Trace-VstsEnteringInvocation $MyInvocation
 
         if ($PropertyObject.ExtensionData.ContainsKey("environmentVariable")) {
@@ -29,40 +61,11 @@ function Get-SchemaProperty {
 
             if (![string]::IsNullOrEmpty($TaskVariable)) {
                 Write-Verbose "$VariableName found"
-                switch ($PSCmdlet.ParameterSetName) {
-                    'Standard' {
-                        Write-Verbose "$VariableName is a string"
-                        break
-                    }
-
-                    'AsInt' {
-                        Write-Verbose "Casting $VariableName to an int"
-                        $TaskVariable = [int]$TaskVariable
-                        break
-                    }
-
-                    'AsNumber' {
-                        Write-Verbose "Casting $VariableName to a decimal"
-                        $TaskVariable = [Decimal]::Parse($TaskVariable)
-                        break
-                    }
-
-                    'AsArray' {
-                        Write-Verbose "Casting $VariableName to an array"
-                        $TaskVariable = @($TaskVariable | ConvertFrom-Json)
-                        break
-                    }
-
-                    'AsBool' {
-                        Write-Verbose "Casting $VariableName to a boolean"
-                        $TaskVariable = "$TaskVariable".ToLower() -in '1', 'true'
-                        break
-                    }
-                }
+                $TaskVariable = Set-PropertyType -Value $TaskVariable -Type $PSCmdlet.ParameterSetName
             }
             elseif ($null -ne $PropertyObject.Default) {
                 Write-Verbose -Message "No environment variable found but a default value is present in the schema"
-                $TaskVariable = $PropertyObject.Default.Value
+                $TaskVariable = Set-PropertyType -Value $PropertyObject.Default.Value -Type $PSCmdlet.ParameterSetName
                 Write-Verbose -Message "Set default value '$TaskVariable'"
             }
             else {
