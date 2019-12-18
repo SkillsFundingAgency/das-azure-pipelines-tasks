@@ -71,10 +71,11 @@ function Get-SchemaProperty {
 
             Write-Output $TaskVariable
         }
-        catch {
-            Write-Error -Message "Could not get property from object [ $VariableName ] : $_" -ErrorAction Stop
-        }
-        finally {
-            Trace-VstsLeavingInvocation $MyInvocation
-        }
     }
+    catch {
+        Write-Error -Message "Could not get property from object [ $VariableName ] : $_" -ErrorAction Stop
+    }
+    finally {
+        Trace-VstsLeavingInvocation $MyInvocation
+    }
+}
