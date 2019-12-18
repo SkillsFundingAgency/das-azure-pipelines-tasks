@@ -25,53 +25,56 @@ function Get-SchemaProperty {
 
             $VariableName = $PropertyObject.ExtensionData.Item("environmentVariable").Value
 
-            switch ($PSCmdlet.ParameterSetName) {
+            $TaskVariable = Get-VstsTaskVariable -Name $VariableName
 
-                'Standard' {
-                    $TaskVariable = Get-VstsTaskVariable -Name $VariableName
-                    break
+            if (![string]::IsNullOrEmpty($TaskVariable)) {
+                Write-Verbose "$VariableName found"
+                switch ($PSCmdlet.ParameterSetName) {
+                    'Standard' {
+                        Write-Verbose "$VariableName is a string"
+                        break
+                    }
+
+                    'AsInt' {
+                        Write-Verbose "Casting $VariableName to an int"
+                        $TaskVariable = [int]$TaskVariable
+                        break
+                    }
+
+                    'AsNumber' {
+                        Write-Verbose "Casting $VariableName to a decimal"
+                        $TaskVariable = [Decimal]::Parse($TaskVariable)
+                        break
+                    }
+
+                    'AsArray' {
+                        Write-Verbose "Casting $VariableName to an array"
+                        $TaskVariable = @($TaskVariable | ConvertFrom-Json)
+                        break
+                    }
+
+                    'AsBool' {
+                        Write-Verbose "Casting $VariableName to a boolean"
+                        $TaskVariable = "$TaskVariable".ToLower() -in '1', 'true'
+                        break
+                    }
                 }
-
-                'AsInt' {
-                    $TaskVariable = Get-VstsTaskVariable -Name $VariableName -AsInt
-                    break
-                }
-
-                'AsNumber' {
-                    $TaskVariable = [Decimal]::Parse((Get-VstsTaskVariable -Name $VariableName))
-                    break
-                }
-
-                'AsArray' {
-                    $ArrayString = Get-VstsTaskVariable -Name $VariableName
-                    $TaskVariable = @($ArrayString | ConvertFrom-Json)
-                    break
-                }
-
-                'AsBool' {
-                    $TaskVariable = Get-VstsTaskVariable -Name $VariableName -AsBool
-                    break
-                }
-
             }
-        }
+            elseif ($null -ne $PropertyObject.Default) {
+                Write-Verbose -Message "No environment variable found but a default value is present in the schema"
+                $TaskVariable = $PropertyObject.Default.Value
+                Write-Verbose -Message "Set default value '$TaskVariable'"
+            }
+            else {
+                throw "No environment variable found and no default value set in schema"
+            }
 
-        if (!$TaskVariable -and $null -ne $PropertyObject.Default) {
-            Write-Verbose -Message "No environment variable found for [ $VariableName ] and a default value is present in the schema"
-            $TaskVariable = $PropertyObject.Default.Value
-            Write-Verbose -Message "Set default value '$TaskVariable'"
+            Write-Output $TaskVariable
         }
-
-        if ($null -eq $TaskVariable) {
-            throw "No environment variable found and no default value set in schema"
+        catch {
+            Write-Error -Message "Could not get property from object [ $VariableName ] : $_" -ErrorAction Stop
         }
-
-        Write-Output $TaskVariable
+        finally {
+            Trace-VstsLeavingInvocation $MyInvocation
+        }
     }
-    catch {
-        Write-Error -Message "Could not get property from object [ $VariableName ] : $_" -ErrorAction Stop
-    }
-    finally {
-        Trace-VstsLeavingInvocation $MyInvocation
-    }
-}
