@@ -60,8 +60,7 @@ function Get-SchemaProperty {
             if (![string]::IsNullOrEmpty($TaskVariable)) {
                 Write-Verbose "$VariableName found"
                 $TaskVariable = Set-PropertyType -Value $TaskVariable -Type $PSCmdlet.ParameterSetName
-                Write-Output $TaskVariable
-                return
+                return $TaskVariable
             }
         }
 
@@ -69,13 +68,10 @@ function Get-SchemaProperty {
             Write-Verbose -Message "No environment variable found but a default value is present in the schema"
             $TaskVariable = Set-PropertyType -Value $PropertyObject.Default.Value -Type $PSCmdlet.ParameterSetName
             Write-Verbose -Message "Set default value '$TaskVariable'"
-        }
-        else {
-            throw "No environment variable found and no default value set in schema"
+            return $TaskVariable
         }
 
-        Write-Output $TaskVariable
-        return
+        throw "No environment variable found and no default value set in schema"
     }
     catch {
         Write-Error -Message "Could not get property from object [ $VariableName ] : $_" -ErrorAction Stop
