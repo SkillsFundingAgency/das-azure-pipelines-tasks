@@ -60,6 +60,8 @@ function Get-SchemaProperty {
             if (![string]::IsNullOrEmpty($TaskVariable)) {
                 Write-Verbose "$VariableName found"
                 $TaskVariable = Set-PropertyType -Value $TaskVariable -Type $PSCmdlet.ParameterSetName
+                Write-Output $TaskVariable
+                return
             }
         }
 
@@ -73,6 +75,7 @@ function Get-SchemaProperty {
         }
 
         Write-Output $TaskVariable
+        return
     }
     catch {
         Write-Error -Message "Could not get property from object [ $VariableName ] : $_" -ErrorAction Stop
