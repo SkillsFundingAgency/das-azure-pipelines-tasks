@@ -1,1 +1,5 @@
 Release/
+node_modules
+.taskkey
+*.js
+*.js.log
