@@ -1,0 +1,36 @@
+{
+  "manifestVersion": 1,
+  "id": "dependency-check",
+  "name": "Dependency Check",
+  "version": "0.1.0",
+  "publisher": "esfadevops",
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "description": "OWASP Dependency Check task for Azure Pipelines",
+  "categories": [
+    "Azure Pipelines"
+  ],
+  "icons": {
+    "default": "images/shield.png"
+  },
+  "files": [
+    {
+      "path": "buildAndReleaseTask"
+    }
+  ],
+  "contributions": [
+    {
+      "id": "custom-dependency-check",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "buildAndReleaseTask"
+      }
+    }
+  ]
+}

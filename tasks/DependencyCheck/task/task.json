@@ -25,7 +25,7 @@
   ],
   "execution": {
       "Node10": {
-          "target": "task/index.js"
+          "target": "index.js"
       }
   }
 }

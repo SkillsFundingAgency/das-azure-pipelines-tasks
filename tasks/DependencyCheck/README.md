@@ -9,3 +9,6 @@ code --install-extension dbaeumer.vscode-eslint
 ```
 npm install
 ```
+
+
+Icons credit: https://www.flaticon.com/authors/freepik
