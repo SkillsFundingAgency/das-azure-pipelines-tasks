@@ -1,16 +1,31 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
+import { LogAnalytics, ILogAnalytics, ILogAnalyticsResponse } from './log-analytics';
+
 import tl = require('azure-pipelines-task-lib/task');
 
-async function run() {
+const logType = 'DependencyCheck';
+
+async function run(): Promise<void> {
   try {
-    const inputString: string | undefined = tl.getInput('samplestring', true);
-    if (inputString === 'bad') {
-      tl.setResult(tl.TaskResult.Failed, 'Bad input was given');
-      return;
+    const la: ILogAnalytics = new LogAnalytics(
+      'xxxx',
+      'xxxx',
+    );
+
+    const body = {
+      name: 'name',
+      property: 1,
+      property2: 'two',
+    };
+
+    const result: ILogAnalyticsResponse = await la.sendLogAnalyticsData(
+      JSON.stringify(body), logType,
+    );
+
+    if (result.stausCode !== 200) {
+      tl.setResult(tl.TaskResult.Failed, result.message);
+    } else {
+      tl.setResult(tl.TaskResult.Succeeded, result.message);
     }
-    console.log('Hello', inputString);
   } catch (err) {
     tl.setResult(tl.TaskResult.Failed, err.message);
   }
