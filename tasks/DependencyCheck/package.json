@@ -10,18 +10,25 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "azure-pipelines-task-lib": "^2.9.3"
+    "@types/request": "^2.48.4",
+    "@types/request-promise-native": "^1.0.17",
+    "azure-pipelines-task-lib": "^2.9.3",
+    "crypto": "^1.0.1",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.8"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.7",
     "@types/node": "^13.5.1",
     "@types/q": "^1.5.2",
-    "sync-request": "^6.1.0",
-    "@typescript-eslint/eslint-plugin": "^2.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "eslint": "5.16",
     "eslint-config-airbnb-typescript": "^6.3.0",
+    "eslint-plugin-eslint-comments": "^3.1.2",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint": "^6.6.0",
-    "eslint-plugin-eslint-comments": "^3.1.2"
+    "eslint-plugin-react": "^7.18.0",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "sync-request": "^6.1.0"
   }
 }
