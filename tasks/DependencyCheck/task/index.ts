@@ -1,13 +1,19 @@
 import { LogAnalyticsClient, ILogAnalyticsClient } from './log-analytics';
 import tl = require('azure-pipelines-task-lib/task');
 import { resolve } from 'dns';
+import path = require('path')
+
+tl.setResourcePath(path.join(__dirname, 'task.json'));
 
 const logType = 'DependencyCheck';
 
+var workspaceId : string = tl.getInput('workspaceId', true)!;
+var sharedKey: string = tl.getInput('sharedKey', true)!;
+
 //EDIT TO LOG ANALYTICS WORKSPACE CREDENTIALS
 const la: ILogAnalyticsClient = new LogAnalyticsClient(
-  'XXXX',
-  'XXXX==',
+  workspaceId,
+  sharedKey,
 );
 
 async function run(): Promise<void> {
@@ -20,19 +26,12 @@ failOnCVSS: score set between 0 and 10
 
 function owaspCheck() {
   const projectName = "OWASP Dependency Check"
-
-  //EDIT TO PATH TO REPO
-  const scanPath = "C:/XXXX"
-
   const format = "CSV"
 
-  //Trim strings: projectName, scanPath
-
-  //Create dependency-scan-results directory
+  var scanPath : string = tl.getVariable('Agent.BuildDirectory')!;
 
   //Log warning if new version of dependency-check CLI is available
 
-  //Set const arguments using above variables
 
   var argumentList = "--project".concat(projectName, " --scan ", scanPath, " --format ", format)
 
