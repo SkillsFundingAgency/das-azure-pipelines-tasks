@@ -1,8 +1,7 @@
-Release/
 node_modules
 data
-lib
 .taskkey
 dependency-check-report.csv
 *.js
 *.js.log
+.vsix

@@ -6,7 +6,7 @@
   "description": "OWASP Dependency Check task for Azure Pipelines",
   "helpMarkDown": "",
   "category": "Utility",
-  "author": "esfadevops",
+  "author": "esfa-devops",
   "version": {
       "Major": 0,
       "Minor": 1,

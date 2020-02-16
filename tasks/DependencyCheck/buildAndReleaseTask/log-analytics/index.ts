@@ -65,12 +65,12 @@ export class LogAnalyticsClient implements ILogAnalyticsClient {
     };
 
     const response = await request.post(options)
-      .then((r) => ({
+      .then((r: any) => ({
         name: 'DataSubmitted',
         stausCode: r.statusCode,
         message: 'OK',
       }))
-      .catch((err) => ({
+      .catch((err: any) => ({
         name: err.name,
         stausCode: err.statusCode,
         message: err.resonse ? err.response : JSON.parse(err.response.body),
