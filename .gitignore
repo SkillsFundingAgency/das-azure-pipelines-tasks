@@ -4,4 +4,4 @@ data
 dependency-check-report.csv
 *.js
 *.js.log
-.vsix
+*.vsix
