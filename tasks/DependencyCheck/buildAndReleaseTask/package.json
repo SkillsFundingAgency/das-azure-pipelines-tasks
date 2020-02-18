@@ -5,7 +5,8 @@
   "main": "task/index.js",
   "scripts": {
     "test": "mocha tests/_suite.js",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "start": "tsc && node ./index.js"
   },
   "author": "",
   "license": "ISC",
