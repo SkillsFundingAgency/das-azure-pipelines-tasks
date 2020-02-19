@@ -3,5 +3,6 @@ data
 .taskkey
 dependency-check-report.csv
 *.js
+*.js.map
 *.js.log
 *.vsix

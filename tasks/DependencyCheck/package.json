@@ -2,14 +2,16 @@
   "name": "dependencycheck",
   "version": "0.1.0",
   "description": "",
-  "main": "task/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "mocha tests/_suite.js",
     "lint": "eslint . --ext .ts",
-    "start": "tsc && node ./index.js"
+    "build": "tsc -p ./",
+    "start": "npm run build && node index.js",
+    "package": "tfx extension create --manifest-globs vss-extension.json"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@types/request": "^2.48.4",
     "@types/request-promise-native": "^1.0.17",
@@ -31,6 +33,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.18.0",
     "eslint-plugin-react-hooks": "^1.7.0",
-    "sync-request": "^6.1.0"
+    "sync-request": "^6.1.0",
+    "tfx-cli": "^0.7.11"
   }
 }
