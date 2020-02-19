@@ -32,7 +32,7 @@ export async function getVulnData(vulnUrl: string, filePath: string): Promise<vo
 export async function owaspCheck(scriptPath: string): Promise<string> {
   const projectName = 'OWASP Dependency Check';
   const format = 'CSV';
-  const scanPath: string = tl.getVariable('Agent.BuildDirectory') || 'C:/Users/craig/code/das-tools-service';
+  const scanPath: string = tl.getVariable('Agent.BuildDirectory') as string;
   tl.debug(`OWASP scan directory set to ${scanPath}`);
   // Log warning if new version of dependency-check CLI is available
 
