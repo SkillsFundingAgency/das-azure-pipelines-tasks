@@ -21,6 +21,7 @@ async function run(): Promise<void> {
     const sharedKey: string = tl.getInput('sharedKey') || process.env.sharedKey as string;
     const selfHostedDatabase: boolean = tl.getBoolInput('selfHostedDatabase') || (process.env.selfHostedDatabase === 'true');
     const storageAccountName: string = tl.getInput('storageAccountName', (selfHostedDatabase && (tl.getVariable('System.Debug') === 'true'))) || process.env.storageAccountName as string;
+    const scanPath: string = tl.getInput('scanPath') || process.env.scanPath as string;
 
     const la: ILogAnalyticsClient = new LogAnalyticsClient(
       workspaceId,
@@ -28,29 +29,30 @@ async function run(): Promise<void> {
     );
 
     const scriptBasePath = `${__dirname}/dependency-check-cli/bin/dependency-check`;
-    const scriptFullPath = process.platform === 'win32' ? `${scriptBasePath}.bat` : `${scriptBasePath}.bat`;
+    const scriptFullPath = process.platform === 'win32' ? `${scriptBasePath}.bat` : `${scriptBasePath}.sh`;
     tl.debug(`Dependency check script path set to ${scriptFullPath}`);
 
+
     if (selfHostedDatabase) {
-      console.log(`${emoji.get('timer_clock')} Downloading vulnerability data.`);
       cleanDependencyCheckData();
       await getVulnData(`https://${storageAccountName}.blob.core.windows.net/cache/odc.mv.db`, `${__dirname}/dependency-check-cli/data/odc.mv.db`);
       await getVulnData(`https://${storageAccountName}.blob.core.windows.net/cache/jsrepository.json`, `${__dirname}/dependency-check-cli/data/jsrepository.json`);
     }
 
-    await owaspCheck(scriptFullPath);
+    await owaspCheck(scriptFullPath, scanPath);
     const payload = await csv().fromFile(csvFilePath);
 
     if (payload.length > 0) {
       await la.sendLogAnalyticsData(
         JSON.stringify(payload), logType, new Date().toISOString(),
       ).then((() => {
-        console.log(`${emoji.get('pensive')} Vulnerabilities were found in this project.`);
+        const vuln = payload.length > 1 ? 'vulnerabilities' : 'vulnerability';
+        console.log(`${emoji.get('pensive')}  A total of ${payload.length} ${vuln} were found in this project.`);
       })).catch(((e) => {
         tl.setResult(tl.TaskResult.Failed, e);
       }));
     } else {
-      console.log(`${emoji.get('slightly_smiling_face')} Good news, there are no vulnerabilities to report!`);
+      console.log(`${emoji.get('slightly_smiling_face')}  Good news, there are no vulnerabilities to report!`);
     }
 
     tl.setResult(tl.TaskResult.Succeeded, '');
