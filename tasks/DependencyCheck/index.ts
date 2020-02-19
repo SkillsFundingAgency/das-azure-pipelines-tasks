@@ -1,105 +1,64 @@
-import tl = require('azure-pipelines-task-lib/task');
+import csv from 'csvtojson';
 import { LogAnalyticsClient, ILogAnalyticsClient } from './log-analytics';
-import { resolve } from 'dns';
-import path = require('path')
-import * as request from 'request-promise-native';
-import { promises as fs } from 'fs';
-import * as cp from 'child_process';
+import { getVulnData, owaspCheck, cleanDependencyCheckData } from './utility';
 
-var child_process = require('child_process');
-
-tl.setResourcePath(path.join(__dirname, 'task.json'));
+import emoji = require('node-emoji');
+import tl = require('azure-pipelines-task-lib/task');
+import path = require('path');
 
 const logType = 'DependencyCheck';
-
-var workspaceId : string = tl.getInput('workspaceId', true)!;
-var sharedKey: string = tl.getInput('sharedKey', true)!;
-
-const la: ILogAnalyticsClient = new LogAnalyticsClient(
-  workspaceId,
-  sharedKey,
-);
+const csvFilePath = `${__dirname}/dependency-check-report.csv`;
+tl.debug(`Temporary report csv location set to ${csvFilePath}`);
 
 async function run(): Promise<void> {
+  try {
+    const taskManifestPath = path.join(__dirname, 'task.json');
+    tl.debug(`Setting resource path to ${taskManifestPath}`);
+    tl.setResourcePath(taskManifestPath);
 
-  //Set variables for dependency-check-cli arguments - https://jeremylong.github.io/DependencyCheck/dependency-check-cli/arguments.html :
-  /*
-  OPTIONAL:
-  failOnCVSS: score set between 0 and 10
-  */
+    const workspaceId: string = tl.getInput('workspaceId') || process.env.workspaceId as string;
+    const sharedKey: string = tl.getInput('sharedKey') || process.env.sharedKey as string;
 
-  let cliScript = "";
-  if (process.platform === "linux") {
-    cliScript = require.resolve('./dependency-check-cli/bin/dependency-check.sh');
-    const editPermission = cp.spawnSync('chmod', ['+x', cliScript])
-  }
-  else if (process.platform === "win32") {
-    cliScript = require.resolve('./dependency-check-cli/bin/dependency-check.bat');
-  }
+    const selfHostedDatabase: boolean = tl.getBoolInput('selfHostedDatabase');
 
-  async function getVulnData(vulnUrl: string, filePath: string) {
-    const options = {
-      url: vulnUrl,
-      resolveWithFullResponse: true,
-    };
-    console.log('Writing file')
+    // Require storageAccountName input if selfHostedDatabase is true
+    const storageAccountName: string = tl.getInput('sharedKey', selfHostedDatabase) as string;
 
-    const response = await request.get(options)
-      .then((r: any) => (
-        fs.writeFile(filePath, r.body)
-      ))
-      .catch((err: any) => ({
-        name: err.name,
-        stausCode: err.statusCode,
-        message: err.resonse ? err.response : JSON.parse(err.response.body),
+    const la: ILogAnalyticsClient = new LogAnalyticsClient(
+      workspaceId,
+      sharedKey,
+    );
+
+    const scriptBasePath = `${__dirname}/dependency-check-cli/bin/dependency-check`;
+    const scriptFullPath = process.platform === 'win32' ? `${scriptBasePath}.bat` : `${scriptBasePath}.bat`;
+    tl.debug(`Dependency check script path set to ${scriptFullPath}`);
+
+    if (selfHostedDatabase) {
+      console.log(`${emoji.get('timer_clock')} Downloading vulnerability data.`);
+      cleanDependencyCheckData();
+      await getVulnData(`https://${storageAccountName}.blob.core.windows.net/cache/odc.mv.db`, `${__dirname}/dependency-check-cli/data/odc.mv.db`);
+      await getVulnData(`https://${storageAccountName}.blob.core.windows.net/cache/jsrepository.json`, `${__dirname}/dependency-check-cli/data/jsrepository.json`);
+    }
+
+    await owaspCheck(scriptFullPath);
+    const payload = await csv().fromFile(csvFilePath);
+
+    if (payload.length > 0) {
+      await la.sendLogAnalyticsData(
+        JSON.stringify(payload), logType, new Date().toISOString(),
+      ).then((() => {
+        console.log(`${emoji.get('pensive')} Vulnerabilities were found in this project.`);
+      })).catch(((e) => {
+        tl.setResult(tl.TaskResult.Failed, e);
       }));
+    } else {
+      console.log(`${emoji.get('slightly_smiling_face')} Good news, there are no vulnerabilities to report!`);
+    }
 
-    return response;
+    tl.setResult(tl.TaskResult.Succeeded, '');
+  } catch (e) {
+    tl.setResult(tl.TaskResult.Failed, e);
   }
-
-
-  function owaspCheck() {
-    const projectName = "OWASP Dependency Check"
-    const format = "CSV"
-
-    var scanPath: string = tl.getVariable('Agent.BuildDirectory')!;
-
-    //Log warning if new version of dependency-check CLI is available
-
-    console.log("owaspcheck()");
-    const process = cp.spawnSync(cliScript, ['--project', projectName, '--scan', scanPath, '--format', format, '--no-update']);
-    /*Debugging when spawn:
-    process.stderr.setEncoding('utf8');
-    process.stdout.on('data', (d) => {
-      console.log(d.toString());
-    })*/
-  }
-
-  await getVulnData('https://<storage-account>.blob.core.windows.net/cache/odc.mv.db', './dependency-check-cli/data/odc.mv.db')
-  await getVulnData('https://<storage-account>.blob.core.windows.net/cache/jsrepository.json', './dependency-check-cli/data/jsrepository.json')
-
-  owaspCheck()
-
-  const csvFilePath = './dependency-check-report.csv'
-  const csv = require('csvtojson')
-
-  const json = await csv()
-    .fromFile(csvFilePath)
-    .subscribe((jsonObj: any) => {
-      return new Promise((resolve, reject) => {
-        jsonObj.myNewKey = 'some value';
-        resolve();
-      })
-    })
-  console.log(json)
-
-  await la.sendLogAnalyticsData(
-    JSON.stringify(json), logType, new Date().toISOString(),
-  ).then(((res) => {
-    console.log(res);
-  })).catch(((err) => {
-    console.error(err);
-  }));
 }
 
 run();
