@@ -6,3 +6,4 @@ dependency-check-report.csv
 *.js.map
 *.js.log
 *.vsix
+.env
