@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/_suite.js",
+    "test": "npm run build && node ./tests/TaskRunner.js",
     "lint": "eslint . --ext .ts",
     "build": "tsc -p ./",
     "start": "npm run build && node index.js",
@@ -20,7 +20,8 @@
     "csvtojson": "^2.0.10",
     "node-emoji": "^1.10.0",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.8"
+    "request-promise-native": "^1.0.8",
+    "typescript": "^3.7.5"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.7",

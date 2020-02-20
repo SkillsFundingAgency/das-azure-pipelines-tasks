@@ -11,6 +11,7 @@ export function cleanDependencyCheckData(): void {
     tl.checkPath(path, 'Dependency check cli data folder');
     tl.rmRF(path);
   } catch (e) {
+    console.debug(`An error was caugh during cleanup ${e}`);
     console.warn(`Data path did not exist. The task will attempt to create it at: ${path}`);
   }
 
