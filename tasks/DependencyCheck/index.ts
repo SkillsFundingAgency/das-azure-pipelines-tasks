@@ -32,11 +32,10 @@ async function run(): Promise<void> {
     const scriptFullPath = process.platform === 'win32' ? `${scriptBasePath}.bat` : `${scriptBasePath}.sh`;
     tl.debug(`Dependency check script path set to ${scriptFullPath}`);
 
-
     if (selfHostedDatabase) {
       cleanDependencyCheckData();
-      await getVulnData(`https://${storageAccountName}.blob.core.windows.net/cache/odc.mv.db`, `${__dirname}/dependency-check-cli/data/odc.mv.db`);
-      await getVulnData(`https://${storageAccountName}.blob.core.windows.net/cache/jsrepository.json`, `${__dirname}/dependency-check-cli/data/jsrepository.json`);
+      await getVulnData(storageAccountName, 'odc.mv.db', `${__dirname}/dependency-check-cli/data/odc.mv.db`);
+      await getVulnData(storageAccountName, 'jsrepository.json', `${__dirname}/dependency-check-cli/data/jsrepository.json`);
     }
 
     await owaspCheck(scriptFullPath, scanPath);
