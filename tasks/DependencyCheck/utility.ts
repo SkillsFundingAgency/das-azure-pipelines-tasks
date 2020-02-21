@@ -4,18 +4,19 @@ import * as cp from 'child_process';
 import emoji = require('node-emoji');
 import tl = require('azure-pipelines-task-lib/task');
 import http = require('https');
+import path = require('path');
 
 export function cleanDependencyCheckData(): void {
-  const path = `${__dirname}/dependency-check-cli/data`;
+  const p = path.join(__dirname, 'dependency-check-cli', 'data');
   try {
-    tl.checkPath(path, 'Dependency check cli data folder');
-    tl.rmRF(path);
+    tl.checkPath(p, 'Dependency check cli data folder');
+    tl.rmRF(p);
   } catch (e) {
-    console.debug(`An error was caugh during cleanup ${e}`);
-    console.warn(`Data path did not exist. The task will attempt to create it at: ${path}`);
+    tl.debug(`An error was caugh during cleanup ${e}`);
+    tl.warning(`Data path did not exist. The task will attempt to create it at: ${p}`);
   }
 
-  tl.mkdirP(path);
+  tl.mkdirP(p);
 }
 
 export async function getVulnData(vulnUrl: string, filePath: string): Promise<void> {
