@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm run build && node ./tests/TaskRunner.js",
+    "test": "npm run build && node  -r dotenv/config  ./tests/TaskRunner.js",
     "lint": "eslint . --ext .ts",
     "build": "tsc -p ./",
     "start": "npm run build && node index.js",
