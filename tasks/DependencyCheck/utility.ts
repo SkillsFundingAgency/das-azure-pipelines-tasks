@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as cp from 'child_process';
-import { BlobServiceClient } from "@azure/storage-blob";
 
 import emoji = require('node-emoji');
 import tl = require('azure-pipelines-task-lib/task');
@@ -20,17 +19,13 @@ export function cleanDependencyCheckData(): void {
   tl.mkdirP(p);
 }
 
-export async function getVulnData(storageAccountName: string, blobName: string, filePath: string): Promise<void> {
+export async function getVulnData(databaseEndpoint: string, blobName: string, filePath: string): Promise<void> {
   const file = fs.createWriteStream(filePath);
-  const blobServiceClient = new BlobServiceClient(
-    `https://${storageAccountName}.blob.core.windows.net`
-  );
-  const containerClient = blobServiceClient.getContainerClient('cache');
-  const blobClient = containerClient.getBlobClient(blobName);
-  const downloadBlockBlobResponse = await blobClient.download();
+  const vulnUrl = `${databaseEndpoint}${blobName}`;
   return new Promise<void>((resolve, reject) => {
-    downloadBlockBlobResponse.readableStreamBody?.pipe(file)
-      console.log(`${emoji.get('timer_clock')}  Downloading file [${blobName}]`);
+    http.get(vulnUrl, (response: any) => {
+      response.pipe(file);
+      console.log(`${emoji.get('timer_clock')}  Downloading file [${vulnUrl}]`);
       file.on('finish', () => {
         file.close();
         console.log(`${emoji.get('heavy_check_mark')}  File download complete!`);
@@ -41,6 +36,7 @@ export async function getVulnData(storageAccountName: string, blobName: string, 
         fs.unlink(filePath, () => { });
         reject(new Error(err));
       });
+    });
   });
 }
 

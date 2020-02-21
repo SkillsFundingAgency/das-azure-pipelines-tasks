@@ -5,7 +5,7 @@ const inputs = [
   'workspaceId',
   'sharedKey',
   'selfHostedDatabase',
-  'storageAccountName',
+  'databaseEndpoint',
   'scanPath',
 ];
 
