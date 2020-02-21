@@ -10,7 +10,8 @@ const inputs = [
 ];
 
 const taskPath = path.join(__dirname, '..', 'index.js');
-const dependencyCheckDataPath = `${__dirname}/dependency-check-cli/data`;
+const dependencyCheckDataPath = path.join(__dirname, '..', 'dependency-check-cli', 'data');
+console.log(dependencyCheckDataPath);
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 const missingVars: string[] = [];
 
@@ -26,7 +27,6 @@ inputs.forEach((i) => {
   const val = process.env[i];
 
   if (!val || val === undefined) {
-    console.log('here');
     missingVars.push(i);
   } else {
     tmr.setInput(i, val);
