@@ -16,12 +16,11 @@ async function run(): Promise<void> {
     tl.debug(`Setting resource path to ${taskManifestPath}`);
     tl.setResourcePath(taskManifestPath);
 
-    // process.env's added for local debugging only in absense of a proper TaskRunner. TO BE REMOVED!
-    const workspaceId: string = tl.getInput('workspaceId') || process.env.workspaceId as string;
-    const sharedKey: string = tl.getInput('sharedKey') || process.env.sharedKey as string;
-    const selfHostedDatabase: boolean = tl.getBoolInput('selfHostedDatabase') || (process.env.selfHostedDatabase === 'true');
-    const storageAccountName: string = tl.getInput('storageAccountName', (selfHostedDatabase && (tl.getVariable('System.Debug') === 'true'))) || process.env.storageAccountName as string;
-    const scanPath: string = tl.getInput('scanPath') || process.env.scanPath as string;
+    const workspaceId: string = tl.getInput('workspaceId', true) as string;
+    const sharedKey: string = tl.getInput('sharedKey', true) as string;
+    const selfHostedDatabase: boolean = tl.getBoolInput('selfHostedDatabase', true);
+    const storageAccountName: string = tl.getInput('storageAccountName', (selfHostedDatabase)) as string;
+    const scanPath: string = tl.getInput('scanPath', true) as string;
 
     const la: ILogAnalyticsClient = new LogAnalyticsClient(
       workspaceId,
