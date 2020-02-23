@@ -19,7 +19,7 @@ async function run(): Promise<void> {
     const workspaceId: string = tl.getInput('workspaceId', true) as string;
     const sharedKey: string = tl.getInput('sharedKey', true) as string;
     const selfHostedDatabase: boolean = tl.getBoolInput('selfHostedDatabase', true);
-    let databaseEndpoint: string = tl.getInput('databaseEndpoint', (selfHostedDatabase)) as string;
+    const databaseEndpoint: string = tl.getInput('databaseEndpoint', (selfHostedDatabase)) as string;
     const scanPath: string = tl.getInput('scanPath', true) as string;
 
     const la: ILogAnalyticsClient = new LogAnalyticsClient(
@@ -31,12 +31,12 @@ async function run(): Promise<void> {
     const scriptFullPath = process.platform === 'win32' ? `${scriptBasePath}.bat` : `${scriptBasePath}.sh`;
     tl.debug(`Dependency check script path set to ${scriptFullPath}`);
 
-    databaseEndpoint = databaseEndpoint.replace(/,+$/, '');
+    const trimmedDatabaseEndpoint = databaseEndpoint.replace(/,+$/, '');
 
     if (selfHostedDatabase) {
       cleanDependencyCheckData();
-      await getVulnData(databaseEndpoint, 'odc.mv.db', `${__dirname}/dependency-check-cli/data/odc.mv.db`);
-      await getVulnData(databaseEndpoint, 'jsrepository.json', `${__dirname}/dependency-check-cli/data/jsrepository.json`);
+      await getVulnData(trimmedDatabaseEndpoint, 'odc.mv.db', `${__dirname}/dependency-check-cli/data/odc.mv.db`);
+      await getVulnData(trimmedDatabaseEndpoint, 'jsrepository.json', `${__dirname}/dependency-check-cli/data/jsrepository.json`);
     }
 
     await owaspCheck(scriptFullPath, scanPath);
