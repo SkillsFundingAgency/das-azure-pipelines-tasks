@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "dependency-check",
   "name": "Dependency Check",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "esfadevops",
   "targets": [
     {
@@ -18,13 +18,7 @@
   },
   "files": [
     {
-      "path": "dependency-check-cli"
-    },
-    {
-      "path": "log-analytics"
-    },
-    {
-      "path": "index.js"
+      "path": "main"
     }
   ],
   "contributions": [
@@ -33,7 +27,10 @@
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
-      ]
+      ],
+      "properties": {
+        "name": "main"
+      }
     }
   ]
 }

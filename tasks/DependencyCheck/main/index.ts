@@ -1,6 +1,6 @@
 import csv from 'csvtojson';
 import { LogAnalyticsClient, ILogAnalyticsClient } from './log-analytics';
-import { getVulnData, owaspCheck, cleanDependencyCheckData } from './utility';
+import { getVulnData, owaspCheck, cleanDependencyCheckData } from './utilities/utility';
 
 import emoji = require('node-emoji');
 import tl = require('azure-pipelines-task-lib/task');
