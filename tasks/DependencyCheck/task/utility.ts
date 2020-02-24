@@ -21,7 +21,7 @@ export function cleanDependencyCheckData(): void {
 
 export async function getVulnData(databaseEndpoint: string, blobName: string, filePath: string): Promise<void> {
   const file = fs.createWriteStream(filePath);
-  const vulnUrl = `${databaseEndpoint}${blobName}`;
+  const vulnUrl = `${databaseEndpoint}/${blobName}`;
   return new Promise<void>((resolve, reject) => {
     http.get(vulnUrl, (response: any) => {
       response.pipe(file);
@@ -40,13 +40,13 @@ export async function getVulnData(databaseEndpoint: string, blobName: string, fi
   });
 }
 
-export async function owaspCheck(scriptPath: string, scanPath: string): Promise<string> {
+export async function owaspCheck(scriptPath: string, scanPath: string, resultsPath: string): Promise<string> {
   const projectName = 'OWASP Dependency Check';
   const format = 'CSV';
   tl.debug(`OWASP scan directory set to ${scanPath}`);
   // Log warning if new version of dependency-check CLI is available
 
-  const args = ['--project', projectName, '--scan', scanPath, '--format', format, '--noupdate'];
+  const args = ['--project', projectName, '--scan', scanPath, '--out', resultsPath, '--format', format, '--noupdate'];
 
   console.log(`${emoji.get('lightning')}  Executing dependency-check-cli.`);
   tl.debug(`Cli args: ${args.join(' ')}`);

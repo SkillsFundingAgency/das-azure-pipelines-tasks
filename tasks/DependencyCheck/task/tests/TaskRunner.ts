@@ -4,7 +4,7 @@ import path = require('path');
 const inputs = [
   'workspaceId',
   'sharedKey',
-  'selfHostedDatabase',
+  'enableSelfHostedDatabase',
   'databaseEndpoint',
   'scanPath',
 ];

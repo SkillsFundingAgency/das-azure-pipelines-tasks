@@ -8,32 +8,57 @@
   "category": "Utility",
   "author": "esfadevops",
   "version": {
-      "Major": 0,
-      "Minor": 4,
-      "Patch": 0
+    "Major": 0,
+    "Minor": 5,
+    "Patch": 0
   },
   "instanceNameFormat": "Dependency Check",
   "inputs": [
-      {
-          "name": "workspaceId",
-          "type": "string",
-          "label": "Workspace Id",
-          "defaultValue": "",
-          "required": true,
-          "helpMarkDown": "A Log Analytics workspace Id"
-      },
-      {
-        "name": "sharedKey",
-        "type": "string",
-        "label": "Shared Key",
-        "defaultValue": "",
-        "required": true,
-        "helpMarkDown": "A Log Analytics workspace shared key"
-      }
+    {
+      "name": "workspaceId",
+      "type": "string",
+      "label": "Workspace Id",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "A Log Analytics workspace Id"
+    },
+    {
+      "name": "sharedKey",
+      "type": "string",
+      "label": "Shared Key",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "A Log Analytics workspace shared key"
+    },
+    {
+      "name": "enableSelfHostedDatabase",
+      "type": "boolean",
+      "label": "Enable self hosted database",
+      "defaultValue": "false",
+      "helpMarkDown": "Select to enable self hosted database of vulnerabilities for this task.",
+      "required": true
+    },
+    {
+      "name": "databaseEndpoint",
+      "type": "string",
+      "label": "Database endpoint",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "Database endpoint that has files odc.mv.db and jsrepository.json, eg. https://<storage account name>.blob.core.windows.net/<blob container name>",
+      "visibleRule": "enableSelfHostedDatabase = true"
+    },
+    {
+      "name": "scanPath",
+      "type": "string",
+      "label": "Scan path",
+      "defaultValue": "$(Agent.BuildDirectory)",
+      "required": true,
+      "helpMarkDown": "Path to scan for vulnerabiities"
+    }
   ],
   "execution": {
-      "Node10": {
-          "target": "index.js"
-      }
+    "Node10": {
+      "target": "index.js"
+    }
   }
 }
