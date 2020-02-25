@@ -46,6 +46,8 @@ export async function owaspCheck(scriptPath: string, scanPath: string, resultsPa
   tl.debug(`OWASP scan directory set to ${scanPath}`);
   // Log warning if new version of dependency-check CLI is available
 
+  cp.spawnSync('chmod', ['+x', scriptPath])
+
   const args = ['--project', projectName, '--scan', scanPath, '--out', resultsPath, '--format', format, '--noupdate'];
 
   console.log(`${emoji.get('lightning')}  Executing dependency-check-cli.`);
