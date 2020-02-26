@@ -1,4 +1,5 @@
 import csv from 'csvtojson';
+import * as fs from 'fs';
 import { LogAnalyticsClient, ILogAnalyticsClient } from './log-analytics';
 import { getVulnData, owaspCheck, cleanDependencyCheckData } from './utility';
 
@@ -31,6 +32,8 @@ async function run(): Promise<void> {
     const scriptFullPath = process.platform === 'win32' ? `${scriptBasePath}.bat` : `${scriptBasePath}.sh`;
     tl.debug(`Dependency check script path set to ${scriptFullPath}`);
 
+    fs.chmodSync(scriptFullPath, 0o1)
+
     const trimmedDatabaseEndpoint = databaseEndpoint.replace(/\/$/, '');
 
     if (enableSelfHostedDatabase) {
@@ -39,7 +42,7 @@ async function run(): Promise<void> {
       await getVulnData(trimmedDatabaseEndpoint, 'jsrepository.json', `${__dirname}/dependency-check-cli/data/jsrepository.json`);
     }
 
-    await owaspCheck(scriptFullPath, scanPath, csvFilePath);
+    await owaspCheck(scriptFullPath, scanPath, csvFilePath, enableSelfHostedDatabase);
     const payload = await csv().fromFile(csvFilePath);
 
     if (payload.length > 0) {
