@@ -36,9 +36,8 @@ async function run(): Promise<void> {
       spawnSync('chmod', ['+x', scriptFullPath])
     }
 
-    const trimmedDatabaseEndpoint = databaseEndpoint.replace(/\/$/, '');
-
     if (enableSelfHostedDatabase) {
+      const trimmedDatabaseEndpoint = databaseEndpoint.replace(/\/$/, '');
       cleanDependencyCheckData();
       await getVulnData(trimmedDatabaseEndpoint, 'odc.mv.db', `${__dirname}/dependency-check-cli/data/odc.mv.db`);
       await getVulnData(trimmedDatabaseEndpoint, 'jsrepository.json', `${__dirname}/dependency-check-cli/data/jsrepository.json`);
