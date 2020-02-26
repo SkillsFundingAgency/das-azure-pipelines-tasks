@@ -1,5 +1,5 @@
 import csv from 'csvtojson';
-import * as fs from 'fs';
+import { spawnSync } from 'child_process';
 import { LogAnalyticsClient, ILogAnalyticsClient } from './log-analytics';
 import { getVulnData, owaspCheck, cleanDependencyCheckData } from './utility';
 
@@ -32,7 +32,9 @@ async function run(): Promise<void> {
     const scriptFullPath = process.platform === 'win32' ? `${scriptBasePath}.bat` : `${scriptBasePath}.sh`;
     tl.debug(`Dependency check script path set to ${scriptFullPath}`);
 
-    fs.chmodSync(scriptFullPath, 0o1)
+    if (!(process.platform === 'win32')) {
+      spawnSync('chmod', ['+x', scriptFullPath])
+    }
 
     const trimmedDatabaseEndpoint = databaseEndpoint.replace(/\/$/, '');
 
