@@ -23,10 +23,10 @@ async function run(): Promise<void> {
     const databaseEndpoint: string = tl.getInput('databaseEndpoint', (enableSelfHostedDatabase)) as string;
     const scanPath: string = tl.getInput('scanPath', true) as string;
 
-    //var repositoryName: string = (tl.getVariable('Build.RepositoryName'))?.split("/")[1]
-    var branchName = tl.getVariable('Build.SourceBranchName');
-    //var buildNumber: string = tl.getVariable('Build.BuildNumber')
-    //var commitId: string = tl.getVariable('Build.SourceVersion')
+    let repositoryName = (tl.getVariable('Build.RepositoryName'))?.split("/")[1];
+    let branchName = tl.getVariable('Build.SourceBranchName');
+    let buildNumber = tl.getVariable('Build.BuildNumber');
+    let commitId = tl.getVariable('Build.SourceVersion');
 
     const la: ILogAnalyticsClient = new LogAnalyticsClient(
       workspaceId,
@@ -54,7 +54,10 @@ async function run(): Promise<void> {
       .fromFile(csvFilePath)
       .subscribe((jsonObj: any) => {
         return new Promise((resolve, reject) => {
+          jsonObj.RepositoryName = repositoryName;
           jsonObj.BranchName = branchName;
+          jsonObj.BuildNumber = buildNumber;
+          jsonObj.CommitId = commitId;
           resolve();
         })
       })

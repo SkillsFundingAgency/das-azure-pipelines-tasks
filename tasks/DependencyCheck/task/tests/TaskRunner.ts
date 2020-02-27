@@ -22,7 +22,10 @@ tmr.setAnswers(
   },
 );
 
+tmr.setVariableName("Build.RepositoryName", "SkillsFundingAgency/das-repository", false);
 tmr.setVariableName("Build.SourceBranchName", "example-branch", false);
+tmr.setVariableName("Build.BuildNumber", "1.0.0", false);
+tmr.setVariableName("Build.SourceVersion", "48a815313fd34299aad897920f84bd44c4adcf05", false);
 
 inputs.forEach((i) => {
   console.log(` -> Setting mock task input ${i}`);
