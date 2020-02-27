@@ -22,6 +22,8 @@ tmr.setAnswers(
   },
 );
 
+tmr.setVariableName("Build.SourceBranchName", "example-branch", false);
+
 inputs.forEach((i) => {
   console.log(` -> Setting mock task input ${i}`);
   const val = process.env[i];

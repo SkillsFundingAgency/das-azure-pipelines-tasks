@@ -23,6 +23,11 @@ async function run(): Promise<void> {
     const databaseEndpoint: string = tl.getInput('databaseEndpoint', (enableSelfHostedDatabase)) as string;
     const scanPath: string = tl.getInput('scanPath', true) as string;
 
+    //var repositoryName: string = (tl.getVariable('Build.RepositoryName'))?.split("/")[1]
+    var branchName = tl.getVariable('Build.SourceBranchName');
+    //var buildNumber: string = tl.getVariable('Build.BuildNumber')
+    //var commitId: string = tl.getVariable('Build.SourceVersion')
+
     const la: ILogAnalyticsClient = new LogAnalyticsClient(
       workspaceId,
       sharedKey,
@@ -44,7 +49,15 @@ async function run(): Promise<void> {
     }
 
     await owaspCheck(scriptFullPath, scanPath, csvFilePath, enableSelfHostedDatabase);
-    const payload = await csv().fromFile(csvFilePath);
+
+    const payload = await csv()
+      .fromFile(csvFilePath)
+      .subscribe((jsonObj: any) => {
+        return new Promise((resolve, reject) => {
+          jsonObj.BranchName = branchName;
+          resolve();
+        })
+      })
 
     if (payload.length > 0) {
       await la.sendLogAnalyticsData(
