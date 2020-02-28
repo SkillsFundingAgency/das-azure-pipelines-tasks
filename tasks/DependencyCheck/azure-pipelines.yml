@@ -1,0 +1,56 @@
+name: "0.1.$(rev:r)"
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - "*"
+  paths:
+    include:
+      - tasks/DependencyCheck/*
+
+pr: none
+
+workspace:
+  clean: all
+
+pool:
+  name: 'DAS - Continuous Integration'
+
+steps:
+- task: Npm@1
+  displayName: 'npm install --production'
+  inputs:
+    command: custom
+    workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task'
+    verbose: false
+    customCommand: 'install --production'
+- powershell: Remove-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
+  displayName: 'PowerShell Script: Remove tests folder'
+- script: tsc
+  workingDirectory: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task
+  displayName: 'Command Line Script: tsc'
+- powershell: |
+   $FileName = "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/node_modules/csvtojson/test/data/data#139"
+   if (Test-Path $FileName)
+   {
+     Remove-Item $FileName
+   }
+  displayName: 'PowerShell Script: Remove node module csvtojson data#139 file'
+- task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@2
+  displayName: 'Use Node CLI for Azure DevOps (tfx-cli): v0.6.x'
+- task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageAzureDevOpsExtension@2
+  displayName: 'Package Extension: /tasks/DependencyCheck'
+  inputs:
+    rootFolder: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck'
+    outputPath: '$(System.DefaultWorkingDirectory)/release/bin'
+- task: ms-devlabs.vsts-developer-tools-build-tasks.publish-extension-build-task.PublishAzureDevOpsExtension@2
+  displayName: 'Publish Extension'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  inputs:
+    connectedServiceName: 'Visual Studio Marketplace (VSTS)'
+    fileType: vsix
+    vsixFile: '$(System.DefaultWorkingDirectory)/release/bin/esfadevops.dependency-check-*.vsix'
+    publisherId: esfadevops
+    extensionId: 'dependency-check'
+    updateTasksVersion: false
