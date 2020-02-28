@@ -23,7 +23,7 @@ async function run(): Promise<void> {
     const databaseEndpoint: string = tl.getInput('databaseEndpoint', (enableSelfHostedDatabase)) as string;
     const scanPath: string = tl.getInput('scanPath', true) as string;
 
-    let repositoryName = (tl.getVariable('Build.RepositoryName'))?.split("/")[1];
+    let repositoryName = (tl.getVariable('Build.Repository.Name'))?.split('/')[1];
     let branchName = tl.getVariable('Build.SourceBranchName');
     let buildNumber = tl.getVariable('Build.BuildNumber');
     let commitId = tl.getVariable('Build.SourceVersion');
@@ -74,6 +74,8 @@ async function run(): Promise<void> {
     } else {
       console.log(`${emoji.get('slightly_smiling_face')}  Good news, there are no vulnerabilities to report!`);
     }
+
+    cleanDependencyCheckData();
 
     tl.setResult(tl.TaskResult.Succeeded, '');
   } catch (e) {

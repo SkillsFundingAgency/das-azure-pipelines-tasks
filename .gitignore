@@ -1,5 +1,5 @@
 node_modules
-data
+data/*
 .taskkey
 dependency-check-report.csv
 *.js
