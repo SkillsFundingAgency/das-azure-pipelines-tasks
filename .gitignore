@@ -1,5 +1,6 @@
 node_modules
 data/*
+!data/.gitkeep
 .taskkey
 dependency-check-report.csv
 *.js
