@@ -46,6 +46,7 @@ steps:
     outputPath: '$(System.DefaultWorkingDirectory)/release/bin'
 - task: ms-devlabs.vsts-developer-tools-build-tasks.publish-extension-build-task.PublishAzureDevOpsExtension@2
   displayName: 'Publish Extension'
+  condition: and(succeeded('validate'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     connectedServiceName: 'Visual Studio Marketplace (VSTS)'
     fileType: vsix
