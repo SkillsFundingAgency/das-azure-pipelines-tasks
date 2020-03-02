@@ -1,6 +1,6 @@
 {
   "manifestVersion": 1,
-  "id": "dependency-check",
+  "id": "DependencyCheck",
   "name": "Dependency Check",
   "version": "0.1.0",
   "publisher": "esfadevops",

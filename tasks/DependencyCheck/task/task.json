@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
   "id": "93ee1ebd-95c1-485e-bad4-5514e88f6c62",
-  "name": "dependencycheck",
+  "name": "DependencyCheck",
   "friendlyName": "Dependency Check",
   "description": "OWASP Dependency Check task for Azure Pipelines",
   "helpMarkDown": "",

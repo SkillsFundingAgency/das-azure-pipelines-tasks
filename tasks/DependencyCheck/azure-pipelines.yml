@@ -50,7 +50,7 @@ steps:
   inputs:
     connectedServiceName: 'Visual Studio Marketplace (VSTS)'
     fileType: vsix
-    vsixFile: '$(System.DefaultWorkingDirectory)/release/bin/esfadevops.dependency-check-*.vsix'
+    vsixFile: '$(System.DefaultWorkingDirectory)/release/bin/esfadevops.DependencyCheck-*.vsix'
     publisherId: esfadevops
-    extensionId: 'dependency-check'
+    extensionId: 'DependencyCheck'
     updateTasksVersion: false
