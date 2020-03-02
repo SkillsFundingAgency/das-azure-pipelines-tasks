@@ -25,6 +25,12 @@ steps:
     workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task'
     verbose: false
     customCommand: 'install --production'
+- task: Npm@1
+  displayName: 'npm install -g typescript'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'install -g typescript'
 - powershell: Remove-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
   displayName: 'PowerShell Script: Remove tests folder'
 - script: tsc
