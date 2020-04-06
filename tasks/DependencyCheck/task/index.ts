@@ -25,6 +25,7 @@ async function run(): Promise<void> {
 
     let repositoryName = (tl.getVariable('Build.Repository.Name'))?.split('/')[1];
     let branchName = tl.getVariable('Build.SourceBranchName');
+    let buildName = tl.getVariable('Build.DefinitionName');
     let buildNumber = tl.getVariable('Build.BuildNumber');
     let commitId = tl.getVariable('Build.SourceVersion');
 
@@ -56,6 +57,7 @@ async function run(): Promise<void> {
         return new Promise((resolve, reject) => {
           jsonObj.RepositoryName = repositoryName;
           jsonObj.BranchName = branchName;
+          jsonObj.BuildName = buildName;
           jsonObj.BuildNumber = buildNumber;
           jsonObj.CommitId = commitId;
           resolve();

@@ -24,6 +24,7 @@ tmr.setAnswers(
 
 tmr.setVariableName("Build.Repository.Name", "SkillsFundingAgency/das-repository", false);
 tmr.setVariableName("Build.SourceBranchName", "example-branch", false);
+tmr.setVariableName("Build.DefinitionName", "example-build", false);
 tmr.setVariableName("Build.BuildNumber", "1.0.0", false);
 tmr.setVariableName("Build.SourceVersion", "48a815313fd34299aad897920f84bd44c4adcf05", false);
 
