@@ -40,14 +40,14 @@ export async function getVulnData(databaseEndpoint: string, blobName: string, fi
   });
 }
 
-export async function owaspCheck(scriptPath: string, scanPath: string, resultsPath: string, enableSelfHostedDatabase: boolean): Promise<string> {
+export async function owaspCheck(scriptPath: string, scanPath: string, excludedScanPathPatterns: string, resultsPath: string, enableSelfHostedDatabase: boolean): Promise<string> {
   const projectName = 'OWASP Dependency Check';
   const format = 'CSV';
   tl.debug(`OWASP scan directory set to ${scanPath}`);
   // Log warning if new version of dependency-check CLI is available
 
-  const args = enableSelfHostedDatabase ? ['--project', projectName, '--scan', scanPath, '--out', resultsPath, '--format', format, '--noupdate'] :
-    ['--project', projectName, '--scan', scanPath, '--out', resultsPath, '--format', format]
+  const args = enableSelfHostedDatabase ? ['--project', projectName, '--scan', scanPath, '--exclude', excludedScanPathPatterns, '--out', resultsPath, '--format', format, '--noupdate'] :
+    ['--project', projectName, '--scan', scanPath, '--exclude', excludedScanPathPatterns, '--out', resultsPath, '--format', format]
 
   console.log(`${emoji.get('lightning')}  Executing dependency-check-cli.`);
   tl.debug(`Cli args: ${args.join(' ')}`);

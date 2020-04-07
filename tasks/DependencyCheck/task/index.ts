@@ -22,6 +22,7 @@ async function run(): Promise<void> {
     const enableSelfHostedDatabase: boolean = tl.getBoolInput('enableSelfHostedDatabase', true);
     const databaseEndpoint: string = tl.getInput('databaseEndpoint', (enableSelfHostedDatabase)) as string;
     const scanPath: string = tl.getInput('scanPath', true) as string;
+    const excludedScanPathPatterns: string = tl.getInput('excludedScanPathPatterns', true) as string;
 
     let repositoryName = (tl.getVariable('Build.Repository.Name'))?.split('/')[1];
     let branchName = tl.getVariable('Build.SourceBranchName');
@@ -49,7 +50,7 @@ async function run(): Promise<void> {
       await getVulnData(trimmedDatabaseEndpoint, 'jsrepository.json', `${__dirname}/dependency-check-cli/data/jsrepository.json`);
     }
 
-    await owaspCheck(scriptFullPath, scanPath, csvFilePath, enableSelfHostedDatabase);
+    await owaspCheck(scriptFullPath, scanPath, excludedScanPathPatterns, csvFilePath, enableSelfHostedDatabase);
 
     const payload = await csv()
       .fromFile(csvFilePath)

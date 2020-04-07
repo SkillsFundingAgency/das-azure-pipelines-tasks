@@ -7,6 +7,7 @@ const inputs = [
   'enableSelfHostedDatabase',
   'databaseEndpoint',
   'scanPath',
+  'excludedScanPathPatterns',
 ];
 
 const taskPath = path.join(__dirname, '..', 'index.js');

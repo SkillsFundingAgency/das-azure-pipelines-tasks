@@ -9,7 +9,7 @@
   "author": "esfadevops",
   "version": {
     "Major": 0,
-    "Minor": 2,
+    "Minor": 3,
     "Patch": 0
   },
   "instanceNameFormat": "Dependency Check",
@@ -54,6 +54,14 @@
       "defaultValue": "$(Agent.BuildDirectory)",
       "required": true,
       "helpMarkDown": "Path to scan for vulnerabiities"
+    },
+    {
+      "name": "excludedScanPathPatterns",
+      "type": "string",
+      "label": "Excluded scan path patterns",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "Path patterns to exclude from scan for vulnerabiities"
     }
   ],
   "execution": {
