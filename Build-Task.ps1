@@ -40,7 +40,7 @@
 
     .NOTES
     Requirements:
-    The following applications must be installed an available in your PATH
+    The following applications must be installed and available in your PATH
     - git
     - tfx-cli
 #>

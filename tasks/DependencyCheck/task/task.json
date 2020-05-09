@@ -9,7 +9,7 @@
   "author": "esfadevops",
   "version": {
     "Major": 0,
-    "Minor": 3,
+    "Minor": 0,
     "Patch": 0
   },
   "instanceNameFormat": "Dependency Check",
