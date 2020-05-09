@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "GenerateEnvironmentConfiguration",
   "name": "Generate Environment Configuration",
-  "version": "3.0.253",
+  "version": "Task version set in azure-pipelines.yml",
   "publisher": "esfadevops",
   "targets": [
     {
