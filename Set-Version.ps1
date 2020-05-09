@@ -51,7 +51,7 @@ function Set-Version {
 }
 
 try {
-    if ($ENV:BUILD_BUILDNUMBER) {
+    if ($ENV:GITVERSION_MAJORMINORPATCH) {
         $ResolvedTaskRoot = (Resolve-Path -Path "$TaskRoot").Path
         Set-Version -TaskRoot $ResolvedTaskRoot
     }
