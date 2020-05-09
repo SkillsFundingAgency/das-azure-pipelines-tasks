@@ -6,6 +6,7 @@ trigger:
   paths:
     include:
       - tasks/DependencyCheck/*
+      - Set-Version.ps1
 
 pr: none
 

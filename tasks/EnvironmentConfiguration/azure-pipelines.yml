@@ -8,6 +8,8 @@ trigger:
   paths:
     include:
       - /tasks/EnvironmentConfiguration
+      - azure-pipelines.template.yml
+      - Build-Task.ps1
 
 pr: none
 
