@@ -9,7 +9,7 @@
       "id": "Microsoft.VisualStudio.Services"
     }
   ],
-  "description": "OWASP Dependency Check task for Azure Pipelines",
+  "description": "Dependency Check task for Azure Pipelines",
   "categories": [
     "Azure Pipelines"
   ],
