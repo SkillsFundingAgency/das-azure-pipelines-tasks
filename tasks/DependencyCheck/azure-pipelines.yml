@@ -71,7 +71,7 @@ steps:
   displayName: 'Azure PowerShell script: $(System.ArtifactsDirectory)/New-StorageAccountSASToken.ps1'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
-    azureSubscription: Enterprise
+    azureSubscription: SFA-DIG-Prod-ARM
     ScriptPath: '$(System.ArtifactsDirectory)/New-StorageAccountSASToken.ps1'
     ScriptArguments: '-ResourceGroup "$(SharedEnvResourceGroup)" -StorageAccount "$(SharedStorageAccountName)" -Service "$(StorageAccountService)" -ResourceType "$(StorageAccountResourceType)" -Permissions "$(StorageAccountPermissions)" -ExpiryInMinutes "$(SasUriExpiryInMinutes)" -OutputVariable "WriteStorageAccountContainerSasUri"'
     azurePowerShellVersion: LatestVersion
