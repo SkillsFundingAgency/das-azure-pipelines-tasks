@@ -13,6 +13,9 @@ pr: none
 workspace:
   clean: all
 
+variables:
+  - group: 'Prod Shared Resources'
+
 pool:
   name: 'DAS - Continuous Integration'
 
