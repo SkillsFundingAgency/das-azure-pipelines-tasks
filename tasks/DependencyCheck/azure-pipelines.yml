@@ -76,7 +76,7 @@ steps:
   inputs:
     azureSubscription: SFA-DIG-Prod-ARM
     ScriptPath: '$(System.ArtifactsDirectory)/New-StorageAccountSASToken.ps1'
-    ScriptArguments: '-ResourceGroup "$(SharedEnvResourceGroup)" -StorageAccount "$(SharedStorageAccountName)" -Service "$(StorageAccountService)" -ResourceType "$(StorageAccountResourceType)" -Permissions "$(StorageAccountPermissions)" -ExpiryInMinutes "$(SasUriExpiryInMinutes)" -OutputVariable "WriteStorageAccountContainerSasUri"'
+    ScriptArguments: '-ResourceGroup "$(SharedResourceGroup)" -StorageAccount "$(SharedStorageAccountName)" -Service "$(StorageAccountService)" -ResourceType "$(StorageAccountResourceType)" -Permissions "$(StorageAccountPermissions)" -ExpiryInMinutes "$(SasUriExpiryInMinutes)" -OutputVariable "WriteStorageAccountContainerSasUri"'
     azurePowerShellVersion: LatestVersion
 - powershell: |
    Copy-Item "$(System.DefaultWorkingDirectory)/temp-tests" -Destination "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
