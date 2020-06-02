@@ -39,8 +39,9 @@ steps:
     command: custom
     verbose: false
     customCommand: 'install -g typescript'
-- powershell: Remove-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
-  displayName: 'PowerShell Script: Remove tests folder'
+- powershell: |
+   Copy-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Destination "$(System.DefaultWorkingDirectory)/temp-tests" -Recurse
+   Remove-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
 - script: tsc
   workingDirectory: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task
   displayName: 'Command Line Script: tsc'
@@ -58,6 +59,60 @@ steps:
   inputs:
     rootFolder: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck'
     outputPath: '$(System.DefaultWorkingDirectory)/release/bin'
+- task: DownloadGitHubRelease@0
+  displayName: 'Download GitHub Release'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  inputs:
+    connection: 'GitHub (SFA)'
+    userRepository: 'SkillsFundingAgency/das-platform-automation'
+    defaultVersionType: specificTag
+    version: 3.0.0
+- task: AzurePowerShell@4
+  displayName: 'Azure PowerShell script: $(System.ArtifactsDirectory)/New-StorageAccountSASToken.ps1'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  inputs:
+    azureSubscription: Enterprise
+    ScriptPath: '$(System.ArtifactsDirectory)/New-StorageAccountSASToken.ps1'
+    ScriptArguments: '-ResourceGroup "$(SharedEnvResourceGroup)" -StorageAccount "$(SharedStorageAccountName)" -Service "$(StorageAccountService)" -ResourceType "$(StorageAccountResourceType)" -Permissions "$(StorageAccountPermissions)" -ExpiryInMinutes "$(SasUriExpiryInMinutes)" -OutputVariable "WriteStorageAccountContainerSasUri"'
+    azurePowerShellVersion: LatestVersion
+- powershell: |
+   Copy-Item "$(System.DefaultWorkingDirectory)/temp-tests" -Destination "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
+   $Path = "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task"
+   $Value = @"
+   enableVulnerabilityFilesMaintenance=true
+   writeStorageAccountContainerSasUri=https://$($ENV:SharedStorageAccountName).$($ENV:StorageAccountService).core.windows.net/$($ENV:StorageAccountContainerName)$($ENV:WRITE_STORAGE_ACCOUNT_CONTAINER_SAS_URI)
+   workspaceId=placeholder
+   sharedKey=placeholder
+   enableSelfHostedVulnerabilityFiles=placeholder
+   readStorageAccountContainerSasUri=placeholder
+   scanPath=placeholder
+   excludedScanPathPatterns=placeholder
+   "@
+   New-Item -Path $Path -Name ".env" -Value $Value
+   Get-Content -Path "$($Path)/.env"
+   Rename-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task" "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$($ENV:GITVERSION_MAJORMINORPATCH)"
+  env:
+    WRITE_STORAGE_ACCOUNT_CONTAINER_SAS_URI: $(WriteStorageAccountContainerSasUri)
+  displayName: 'PowerShell Script: Restore tests folder, add a .env file for npm test, renamed task folder to GITVERSION_MAJORMINORPATCH'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+- task: Npm@1
+  displayName: 'npm install'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  inputs:
+    workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)'
+    verbose: false
+- script: tsc
+  workingDirectory: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)
+  displayName: 'Command Line Script: tsc'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+- task: Npm@1
+  displayName: 'npm test to create the new versioned vulnerability files on the storage account'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  inputs:
+    command: custom
+    workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)'
+    verbose: false
+    customCommand: 'test'
 - task: ms-devlabs.vsts-developer-tools-build-tasks.publish-extension-build-task.PublishAzureDevOpsExtension@2
   displayName: 'Publish Extension'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
