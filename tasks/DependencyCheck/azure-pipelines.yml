@@ -63,7 +63,7 @@ steps:
   displayName: 'Download GitHub Release'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
-    connection: 'GitHub (SFA)'
+    connection: SFA
     userRepository: 'SkillsFundingAgency/das-platform-automation'
     defaultVersionType: specificTag
     version: 3.0.0
