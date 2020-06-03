@@ -42,7 +42,7 @@ export async function downloadVulnData(readStorageAccountContainerSasUri: string
   });
 }
 
-export async function UploadVulnData(writeStorageAccountContainerSasUri: string, filePath: string, taskVersion: string): Promise<void> {
+export async function uploadVulnData(writeStorageAccountContainerSasUri: string, filePath: string, taskVersion: string): Promise<void> {
   const anonymousCredential = new AnonymousCredential();
   const blobServiceClient = new ContainerClient(
     `${writeStorageAccountContainerSasUri}`,

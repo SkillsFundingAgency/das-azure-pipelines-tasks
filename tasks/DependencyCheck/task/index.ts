@@ -1,7 +1,7 @@
 import csv from 'csvtojson';
 import { spawnSync } from 'child_process';
 import { LogAnalyticsClient, ILogAnalyticsClient } from './log-analytics';
-import { downloadVulnData, UploadVulnData, owaspCheck, cleanDependencyCheckData } from './utility';
+import { downloadVulnData, uploadVulnData, owaspCheck, cleanDependencyCheckData } from './utility';
 
 import emoji = require('node-emoji');
 import tl = require('azure-pipelines-task-lib/task');
@@ -85,8 +85,8 @@ async function run(): Promise<void> {
     }
     else {
       await owaspCheck(scriptFullPath, scriptFullPath, excludedScanPathPatterns, csvFilePath, false);
-      await UploadVulnData(writeStorageAccountContainerSasUri, `${__dirname}/dependency-check-cli/data/odc.mv.db`, taskVersion);
-      await UploadVulnData(writeStorageAccountContainerSasUri, `${__dirname}/dependency-check-cli/data/jsrepository.json`, taskVersion);
+      await uploadVulnData(writeStorageAccountContainerSasUri, `${__dirname}/dependency-check-cli/data/odc.mv.db`, taskVersion);
+      await uploadVulnData(writeStorageAccountContainerSasUri, `${__dirname}/dependency-check-cli/data/jsrepository.json`, taskVersion);
     }
 
     cleanDependencyCheckData();
