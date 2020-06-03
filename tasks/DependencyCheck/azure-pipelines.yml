@@ -85,8 +85,8 @@ steps:
    $Value = @"
    enableVulnerabilityFilesMaintenance=true
    writeStorageAccountContainerSasUri=https://$($ENV:SharedStorageAccountName).$($ENV:StorageAccountService).core.windows.net/$($ENV:StorageAccountContainerName)$($ENV:WRITE_STORAGE_ACCOUNT_CONTAINER_SAS_URI)
-   workspaceId=placeholder
-   sharedKey=placeholder
+   logAnalyticsWorkspaceId=placeholder
+   logAnalyticsWorkspaceKey=placeholder
    enableSelfHostedVulnerabilityFiles=placeholder
    readStorageAccountContainerSasUri=placeholder
    scanPath=placeholder

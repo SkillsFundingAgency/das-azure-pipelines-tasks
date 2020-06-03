@@ -4,8 +4,8 @@ import path = require('path');
 const inputs = [
   'enableVulnerabilityFilesMaintenance',
   'writeStorageAccountContainerSasUri',
-  'workspaceId',
-  'sharedKey',
+  'logAnalyticsWorkspaceId',
+  'logAnalyticsWorkspaceKey',
   'enableSelfHostedVulnerabilityFiles',
   'readStorageAccountContainerSasUri',
   'scanPath',

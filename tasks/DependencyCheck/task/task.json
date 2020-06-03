@@ -32,7 +32,7 @@
       "visibleRule": "enableVulnerabilityFilesMaintenance = true"
     },
     {
-      "name": "workspaceId",
+      "name": "logAnalyticsWorkspaceId",
       "type": "string",
       "label": "Workspace Id",
       "defaultValue": "",
@@ -41,7 +41,7 @@
       "visibleRule": "enableVulnerabilityFilesMaintenance = false"
     },
     {
-      "name": "sharedKey",
+      "name": "logAnalyticsWorkspaceKey",
       "type": "string",
       "label": "Shared Key",
       "defaultValue": "",

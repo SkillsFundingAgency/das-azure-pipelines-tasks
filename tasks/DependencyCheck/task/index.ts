@@ -22,8 +22,8 @@ async function run(): Promise<void> {
 
     const enableVulnerabilityFilesMaintenance: boolean = tl.getBoolInput('enableVulnerabilityFilesMaintenance', true);
     const writeStorageAccountContainerSasUri: string = tl.getInput('writeStorageAccountContainerSasUri', false) as string;
-    const workspaceId: string = tl.getInput('workspaceId', false) as string;
-    const sharedKey: string = tl.getInput('sharedKey', false) as string;
+    const logAnalyticsWorkspaceId: string = tl.getInput('logAnalyticsWorkspaceId', false) as string;
+    const logAnalyticsWorkspaceKey: string = tl.getInput('logAnalyticsWorkspaceKey', false) as string;
     const enableSelfHostedVulnerabilityFiles: boolean = tl.getBoolInput('enableSelfHostedVulnerabilityFiles', false);
     const readStorageAccountContainerSasUri: string = tl.getInput('readStorageAccountContainerSasUri', false) as string;
     const scanPath: string = tl.getInput('scanPath', false) as string;
@@ -46,8 +46,8 @@ async function run(): Promise<void> {
       let commitId = tl.getVariable('Build.SourceVersion');
 
       const la: ILogAnalyticsClient = new LogAnalyticsClient(
-        workspaceId,
-        sharedKey,
+        logAnalyticsWorkspaceId,
+        logAnalyticsWorkspaceKey,
       );
 
       if (enableSelfHostedVulnerabilityFiles) {
