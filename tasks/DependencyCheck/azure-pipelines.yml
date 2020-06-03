@@ -45,6 +45,7 @@ steps:
 - powershell: |
    Copy-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Destination "$(System.DefaultWorkingDirectory)/temp-tests" -Recurse
    Remove-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
+  displayName: 'PowerShell Script: Copy tests folder contents to a temporary location and delete original folder'
 - script: tsc
   workingDirectory: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task
   displayName: 'Command Line Script: tsc'
