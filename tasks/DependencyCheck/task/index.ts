@@ -39,7 +39,7 @@ async function run(): Promise<void> {
     }
 
     if (!enableVulnerabilityFilesMaintenance) {
-      let repositoryName = (tl.getVariable('Build.Repository.Name'))?.split('/')[1];
+      let repositoryName = (tl.getVariable('Build.Repository.Provider') == 'GitHub') ? (tl.getVariable('Build.Repository.Name'))?.split('/')[1] : tl.getVariable('Build.Repository.Name');
       let branchName = tl.getVariable('Build.SourceBranchName');
       let buildName = tl.getVariable('Build.DefinitionName');
       let buildNumber = tl.getVariable('Build.BuildNumber');

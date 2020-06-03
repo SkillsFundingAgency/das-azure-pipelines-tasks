@@ -25,6 +25,7 @@ tmr.setAnswers(
   },
 );
 
+tmr.setVariableName("Build.Repository.Provider", "GitHub", false);
 tmr.setVariableName("Build.Repository.Name", "SkillsFundingAgency/das-repository", false);
 tmr.setVariableName("Build.SourceBranchName", "example-branch", false);
 tmr.setVariableName("Build.DefinitionName", "example-build", false);
