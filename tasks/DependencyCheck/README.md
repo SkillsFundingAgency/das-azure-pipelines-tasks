@@ -3,7 +3,7 @@ Refer to https://docs.microsoft.com/en-us/azure/devops/extend/develop/add-build-
 
 In order to run the task locally, create a file named .env in the tasks/DependencyCheck/task folder.
 
-Populate contents of the .env for each of the task parameters, referring to the tasks/DependencyCheck/task/task.json for the pararmeters needed.
+Populate contents of the .env for each of the task parameters, referring to the tasks/DependencyCheck/task/task.json for the parameters needed.
 
 ### Format of .env file
 ```
