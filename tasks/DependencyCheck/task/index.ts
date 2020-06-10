@@ -28,6 +28,8 @@ async function run(): Promise<void> {
     const readStorageAccountContainerSasUri: string = tl.getInput('readStorageAccountContainerSasUri', false) as string;
     const scanPath: string = tl.getInput('scanPath', false) as string;
     const excludedScanPathPatterns: string = tl.getInput('excludedScanPathPatterns', false) as string;
+    const severityThreshold: number = parseFloat(tl.getInput('severityThreshold', false) as string);
+    const dependencyCheckDashboardUrl: string = tl.getInput('dependencyCheckDashboardUrl') as string;
 
     const scriptBasePath = `${__dirname}/dependency-check-cli/bin/dependency-check`;
     const scriptFullPath = process.platform === 'win32' ? `${scriptBasePath}.bat` : `${scriptBasePath}.sh`;
@@ -82,6 +84,22 @@ async function run(): Promise<void> {
       } else {
         console.log(`${emoji.get('slightly_smiling_face')}  Good news, there are no vulnerabilities to report!`);
       }
+
+      let counter: number = 0;
+
+      const payloadForSeverityThresholdCheck = await csv()
+        .fromFile(csvFilePath)
+        .subscribe((jsonObj: any) => {
+          return new Promise((resolve, reject) => {
+            if (parseFloat(jsonObj.CVSSv2_Score) >= severityThreshold || parseFloat(jsonObj.CVSSv3_BaseScore) >= severityThreshold ) {
+              counter++;
+            }
+            if (counter > 0) {
+              reject(new Error(`Severity score threshold of ${severityThreshold} has been exceeded. Check the Dependency Check vulnerability dashboard for more details: ${dependencyCheckDashboardUrl}`));
+            }
+            resolve();
+          })
+        })
     }
     else {
       await owaspCheck(scriptFullPath, scriptFullPath, excludedScanPathPatterns, csvFilePath, false);

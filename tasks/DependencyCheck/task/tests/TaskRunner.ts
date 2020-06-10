@@ -10,6 +10,8 @@ const inputs = [
   'readStorageAccountContainerSasUri',
   'scanPath',
   'excludedScanPathPatterns',
+  'severityThreshold',
+  'dependencyCheckDashboardUrl'
 ];
 
 const taskPath = path.join(__dirname, '..', 'index.js');
