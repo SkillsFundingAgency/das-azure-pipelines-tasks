@@ -84,7 +84,7 @@ steps:
    $Path = "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task"
    $Value = @"
    enableVulnerabilityFilesMaintenance=true
-   writeStorageAccountContainerSasUri=https://$($ENV:SharedStorageAccountName).$($ENV:StorageAccountService).core.windows.net/$($ENV:StorageAccountContainerName)$($ENV:WRITE_STORAGE_ACCOUNT_CONTAINER_SAS_URI)
+   writeStorageAccountContainerSasUri=https://$(SharedStorageAccountName).$($ENV:StorageAccountService).core.windows.net/$($ENV:StorageAccountContainerName)$($ENV:WRITE_STORAGE_ACCOUNT_CONTAINER_SAS_URI)
    logAnalyticsWorkspaceId=placeholder
    logAnalyticsWorkspaceKey=placeholder
    enableSelfHostedVulnerabilityFiles=placeholder
