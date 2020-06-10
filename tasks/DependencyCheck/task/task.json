@@ -3,7 +3,7 @@
   "id": "93ee1ebd-95c1-485e-bad4-5514e88f6c62",
   "name": "DependencyCheck",
   "friendlyName": "Dependency Check",
-  "description": "OWASP Dependency Check task for Azure Pipelines",
+  "description": "Dependency Check task for Azure Pipelines to identify vulnerable third-party components",
   "helpMarkDown": "",
   "category": "Utility",
   "author": "esfadevops",
@@ -15,37 +15,57 @@
   "instanceNameFormat": "Dependency Check",
   "inputs": [
     {
-      "name": "workspaceId",
+      "name": "enableVulnerabilityFilesMaintenance",
+      "type": "boolean",
+      "label": "Enable maintenance of vulnerability files in storage account",
+      "defaultValue": "false",
+      "required": true,
+      "helpMarkDown": "Select to enable maintenance of vulnerability files in storage account."
+    },
+    {
+      "name": "writeStorageAccountContainerSasUri",
+      "type": "string",
+      "label": "Write Shared Access Signature Uri for storage account blob container",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "Write Shared Access Signature Uri for blob container of storage account to update the versioned vulnerability files: odc.mv.db and jsrepository.json",
+      "visibleRule": "enableVulnerabilityFilesMaintenance = true"
+    },
+    {
+      "name": "logAnalyticsWorkspaceId",
       "type": "string",
       "label": "Workspace Id",
       "defaultValue": "",
       "required": true,
-      "helpMarkDown": "A Log Analytics workspace Id"
+      "helpMarkDown": "A Log Analytics workspace Id",
+      "visibleRule": "enableVulnerabilityFilesMaintenance = false"
     },
     {
-      "name": "sharedKey",
+      "name": "logAnalyticsWorkspaceKey",
       "type": "string",
       "label": "Shared Key",
       "defaultValue": "",
       "required": true,
-      "helpMarkDown": "A Log Analytics workspace shared key"
+      "helpMarkDown": "A Log Analytics workspace shared key",
+      "visibleRule": "enableVulnerabilityFilesMaintenance = false"
     },
     {
-      "name": "enableSelfHostedDatabase",
+      "name": "enableSelfHostedVulnerabilityFiles",
       "type": "boolean",
-      "label": "Enable self hosted database",
+      "label": "Enable self hosted vulnerability files",
       "defaultValue": "false",
-      "helpMarkDown": "Select to enable self hosted database of vulnerabilities for this task.",
-      "required": true
+      "required": true,
+      "helpMarkDown": "Select to enable self hosted vulnerability files.",
+      "visibleRule": "enableVulnerabilityFilesMaintenance = false"
     },
     {
-      "name": "databaseEndpoint",
+      "name": "readStorageAccountContainerSasUri",
       "type": "string",
-      "label": "Database endpoint",
+      "label": "Read Shared Access Signature Uri to download the database of vulnerabilities",
       "defaultValue": "",
       "required": true,
-      "helpMarkDown": "Database endpoint that has files odc.mv.db and jsrepository.json, eg. https://<storage account name>.blob.core.windows.net/<blob container name>",
-      "visibleRule": "enableSelfHostedDatabase = true"
+      "helpMarkDown": "Read Shared Access Signature Uri for for blob container of storage account to download the versioned vulnerability files: odc.mv.db and jsrepository.json",
+      "visibleRule": "enableSelfHostedVulnerabilityFiles = true"
     },
     {
       "name": "scanPath",
@@ -53,7 +73,8 @@
       "label": "Scan path",
       "defaultValue": "$(Agent.BuildDirectory)",
       "required": true,
-      "helpMarkDown": "Path to scan for vulnerabiities"
+      "helpMarkDown": "Path to scan for vulnerabiities",
+      "visibleRule": "enableVulnerabilityFilesMaintenance = false"
     },
     {
       "name": "excludedScanPathPatterns",
@@ -61,7 +82,26 @@
       "label": "Excluded scan path patterns",
       "defaultValue": "",
       "required": true,
-      "helpMarkDown": "Path patterns to exclude from scan for vulnerabiities"
+      "helpMarkDown": "Path patterns to exclude from scan for vulnerabiities",
+      "visibleRule": "enableVulnerabilityFilesMaintenance = false"
+    },
+    {
+      "name": "severityThreshold",
+      "type": "string",
+      "label": "Severity threshold score for vulnerabilities",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "The task will fail if vulerabilties are detected with a CVSSv2 or CVSSv2 score equal to or higher than the threshold set. Range: 0.1 to 10.0",
+      "visibleRule": "enableVulnerabilityFilesMaintenance = false"
+    },
+    {
+      "name": "dependencyCheckDashboardUrl",
+      "type": "string",
+      "label": "Dependency check dashboard URL",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "Dependency check dashboard URL shown in task Warnings and Errors when vulnerabilities are detected",
+      "visibleRule": "enableVulnerabilityFilesMaintenance = false"
     }
   ],
   "execution": {

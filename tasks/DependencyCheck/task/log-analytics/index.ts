@@ -21,18 +21,18 @@ export interface ILogAnalyticsClient {
 }
 
 export class LogAnalyticsClient implements ILogAnalyticsClient {
-  constructor(private workspaceId: string, private sharedKey: string) {
+  constructor(private logAnalyticsWorkspaceId: string, private logAnalyticsWorkspaceKey: string) {
 
   }
 
   private buildSignature(date: string, contentLength: number): string {
     const string = `POST\n${contentLength}\napplication/json\nx-ms-date:${date}\n/api/logs`;
-    const key = Buffer.from(this.sharedKey, 'base64');
+    const key = Buffer.from(this.logAnalyticsWorkspaceKey, 'base64');
 
     const encodedHash = crypto.createHmac('sha256', key)
       .update(string)
       .digest('base64');
-    return `SharedKey ${this.workspaceId}:${encodedHash}`;
+    return `SharedKey ${this.logAnalyticsWorkspaceId}:${encodedHash}`;
   }
 
   async sendLogAnalyticsData(
@@ -58,7 +58,7 @@ export class LogAnalyticsClient implements ILogAnalyticsClient {
     }
 
     const options = {
-      url: `https://${this.workspaceId}.ods.opinsights.azure.com/api/logs?api-version=2016-04-01`,
+      url: `https://${this.logAnalyticsWorkspaceId}.ods.opinsights.azure.com/api/logs?api-version=2016-04-01`,
       headers,
       body,
       resolveWithFullResponse: true,
