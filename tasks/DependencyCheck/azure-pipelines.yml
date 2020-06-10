@@ -91,6 +91,8 @@ steps:
    readStorageAccountContainerSasUri=placeholder
    scanPath=placeholder
    excludedScanPathPatterns=placeholder
+   severityThreshold=placeholder
+   dependencyCheckDashboardUrl=placeholder
    "@
    New-Item -Path $Path -Name ".env" -Value $Value
    Get-Content -Path "$($Path)/.env"
