@@ -77,7 +77,7 @@ async function run(): Promise<void> {
           JSON.stringify(payload), logType, new Date().toISOString(),
         ).then((() => {
           const vuln = payload.length > 1 ? 'vulnerabilities' : 'vulnerability';
-          tl.warning(`${emoji.get('pensive')}  A total of ${payload.length} ${vuln} were found in this project.`);
+          tl.warning(`${emoji.get('pensive')}  A total of ${payload.length} ${vuln} were found in this project. Check the Dependency Check vulnerability dashboard for more details: ${dependencyCheckDashboardUrl}`);
         })).catch(((e) => {
           tl.setResult(tl.TaskResult.Failed, e);
         }));

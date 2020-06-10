@@ -84,6 +84,24 @@
       "required": true,
       "helpMarkDown": "Path patterns to exclude from scan for vulnerabiities",
       "visibleRule": "enableVulnerabilityFilesMaintenance = false"
+    },
+    {
+      "name": "severityThreshold",
+      "type": "string",
+      "label": "Severity threshold score for vulnerabilities",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "The task will fail if vulerabilties are detected with a CVSSv2 or CVSSv2 score equal to or higher than the threshold set. Range: 0.1 to 10.0",
+      "visibleRule": "enableVulnerabilityFilesMaintenance = false"
+    },
+    {
+      "name": "dependencyCheckDashboardUrl",
+      "type": "string",
+      "label": "Dependency check dashboard URL",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "Dependency check dashboard URL shown in task Warnings and Errors when vulnerabilities are detected",
+      "visibleRule": "enableVulnerabilityFilesMaintenance = false"
     }
   ],
   "execution": {
