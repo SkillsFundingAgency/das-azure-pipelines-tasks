@@ -91,7 +91,7 @@ async function run(): Promise<void> {
         .fromFile(csvFilePath)
         .subscribe((jsonObj: any) => {
           return new Promise((resolve, reject) => {
-            if (parseFloat(jsonObj.CVSSv2_Score) >= severityThreshold || parseFloat(jsonObj.CVSSv3_BaseScore) >= severityThreshold ) {
+            if (parseFloat(jsonObj.CVSSv2_Score) > severityThreshold || parseFloat(jsonObj.CVSSv3_BaseScore) > severityThreshold ) {
               counter++;
             }
             if (counter > 0) {
