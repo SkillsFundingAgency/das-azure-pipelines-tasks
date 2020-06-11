@@ -91,7 +91,7 @@
       "label": "Severity threshold score for vulnerabilities",
       "defaultValue": "",
       "required": true,
-      "helpMarkDown": "The task will fail if vulerabilties are detected with a CVSSv2 or CVSSv2 score equal to or higher than the threshold set. Range: 0.1 to 10.0",
+      "helpMarkDown": "The task will fail if vulerabilties are detected with a CVSSv2 or CVSSv2 score higher than the threshold set. Range: 0.0 to 10.0",
       "visibleRule": "enableVulnerabilityFilesMaintenance = false"
     },
     {
