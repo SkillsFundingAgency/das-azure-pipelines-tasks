@@ -18,7 +18,7 @@
     "@types/q": "^1.5.2",
     "@types/request": "^2.48.4",
     "@types/request-promise-native": "^1.0.17",
-    "azure-pipelines-task-lib": "^2.9.3",
+    "azure-pipelines-task-lib": "^2.11.1",
     "crypto": "^1.0.1",
     "csvtojson": "^2.0.10",
     "node-emoji": "^1.10.0",
