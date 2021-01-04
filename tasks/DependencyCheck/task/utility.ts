@@ -89,7 +89,7 @@ export async function owaspCheck(scriptPath: string, scanPath: string, excludedS
       if (c > 0) {
         reject(new Error(`OWASP scan failed with exit code: ${c}`));
       } else {
-        resolve();
+        resolve('Successful OWASP scan');
       }
     });
   });
