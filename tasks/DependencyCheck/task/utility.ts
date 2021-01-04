@@ -14,9 +14,7 @@ export function cleanDependencyCheckData(): void {
     tl.rmRF(p);
   } catch (e) {
     tl.debug(`An error was caught during cleanup ${e}`);
-    tl.warning(`Data path did not exist. The task will attempt to create it at: ${p}`);
   }
-
   tl.mkdirP(p);
 }
 
