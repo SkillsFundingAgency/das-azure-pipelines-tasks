@@ -108,6 +108,7 @@ steps:
   inputs:
     workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)'
     verbose: false
+# Compile the typescript application
 - script: tsc
   workingDirectory: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)
   displayName: 'Command Line Script: tsc'
@@ -130,3 +131,8 @@ steps:
     publisherId: esfadevops
     extensionId: 'DependencyCheck'
     updateTasksVersion: false
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Artifact: BuildOutput'
+  inputs:
+    targetPath: $(System.DefaultWorkingDirectory)/release/bin/
+    artifactName: BuildOutput
