@@ -26,7 +26,7 @@ steps:
     useConfigFile: true
     configFilePath: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/GitVersion.yml'
 - powershell: |
-    ./Set-Version.ps1 -TaskRoot $(System.DefaultWorkingDirectory)/tasks/DependencyCheck
+    ./Set-Version.ps1 -TaskRoot $(System.DefaultWorkingDirectory)/tasks/DependencyCheck -Verbose
   displayName: "Set Task Version"
   workingDirectory: $(System.DefaultWorkingDirectory)
 - task: Npm@1
