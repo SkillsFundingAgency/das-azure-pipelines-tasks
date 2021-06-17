@@ -79,6 +79,7 @@ steps:
     ScriptPath: '$(System.ArtifactsDirectory)/New-StorageAccountSASToken.ps1'
     ScriptArguments: '-ResourceGroup "$(SharedResourceGroupName)" -StorageAccount "$(SharedStorageAccountName)" -Service "$(StorageAccountService)" -ResourceType "$(StorageAccountResourceType)" -Permissions "$(StorageAccountPermissions)" -ExpiryInMinutes "$(SasUriExpiryInMinutes)" -OutputVariable "WriteStorageAccountContainerSasUri"'
     azurePowerShellVersion: LatestVersion
+    pwsh: true
 - powershell: |
    Copy-Item "$(System.DefaultWorkingDirectory)/temp-tests" -Destination "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
    $Path = "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task"
