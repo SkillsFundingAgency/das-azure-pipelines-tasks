@@ -24,4 +24,6 @@ Use [this file](tasks/EnvironmentConfiguration/dependency.json) as a reference w
 
 ## Building in Azure DevOps
 
-Create an `azure-pipelines.yml` in the root of your task directory and reference `azure-pipelines.template.json` from the root of the repository. Use [this file](tasks/EnvironmentConfiguration/azure-pipelines.yml) as a reference.
+Create an `azure-pipelines.yml` in the root of your task directory and reference `azure-pipelines.template.json` from the root of the repository. Use [this file](tasks/EnvironmentConfiguration/azure-pipelines.yml) as a reference.  You will need to create a Service Connection for Visual Studio Marketplace that uses a PAT token for authentication.  The PAT token will need to the following properties:
+* Organization: All accessible organizations
+* Scope: Marketplace Read and Publish
