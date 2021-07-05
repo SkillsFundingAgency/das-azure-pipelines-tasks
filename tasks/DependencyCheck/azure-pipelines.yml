@@ -125,7 +125,7 @@ steps:
   displayName: 'Publish Extension'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
-    connectedServiceName: 'Visual Studio Marketplace (VSTS)'
+    connectedServiceName: 'Visual Studio Marketplace (Apprenticeship Service)'
     fileType: vsix
     vsixFile: '$(System.DefaultWorkingDirectory)/release/bin/esfadevops.DependencyCheck-*.vsix'
     publisherId: esfadevops
