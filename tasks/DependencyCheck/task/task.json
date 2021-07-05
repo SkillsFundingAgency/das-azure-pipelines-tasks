@@ -6,7 +6,7 @@
   "description": "Dependency Check task for Azure Pipelines to identify vulnerable third-party components",
   "helpMarkDown": "",
   "category": "Utility",
-  "author": "esfadevops",
+  "author": "apprenticeship-service",
   "version": {
     "Major": 0,
     "Minor": 0,

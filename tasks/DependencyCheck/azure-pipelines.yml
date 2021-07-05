@@ -127,7 +127,7 @@ steps:
   inputs:
     connectedServiceName: 'Visual Studio Marketplace (Apprenticeship Service)'
     fileType: vsix
-    vsixFile: '$(System.DefaultWorkingDirectory)/release/bin/esfadevops.DependencyCheck-*.vsix'
+    vsixFile: '$(System.DefaultWorkingDirectory)/release/bin/apprenticeship-service.DependencyCheck-*.vsix'
     publisherId: esfadevops
     extensionId: 'DependencyCheck'
     updateTasksVersion: false
