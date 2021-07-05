@@ -132,6 +132,7 @@ steps:
     extensionId: 'DependencyCheck'
     updateTasksVersion: false
 - task: PublishPipelineArtifact@1
+  condition: always()
   displayName: 'Publish Artifact: BuildOutput'
   inputs:
     targetPath: $(System.DefaultWorkingDirectory)/release/bin/
