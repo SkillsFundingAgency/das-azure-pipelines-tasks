@@ -3,10 +3,10 @@
   ExtensionName:
 
 steps:
-- task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@3
+- task: TfxInstaller@3
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: 'Use Node CLI for Azure DevOps (tfx-cli): latest'
-- task: ms-devlabs.vsts-developer-tools-build-tasks.publish-extension-build-task.PublishAzureDevOpsExtension@3
+- task: PublishAzureDevOpsExtension@3
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: 'Publish Extension'
   inputs:
