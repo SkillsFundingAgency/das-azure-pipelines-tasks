@@ -70,8 +70,7 @@ steps:
 # upload vulnerability files
 - task: DownloadGitHubRelease@0
   displayName: 'Download GitHub Release'
-  ##TO DO: reinstate condition
-  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     connection: SFA
     userRepository: 'SkillsFundingAgency/das-platform-automation'
@@ -79,8 +78,7 @@ steps:
     version: 3.0.0
 - task: AzurePowerShell@4
   displayName: 'Azure PowerShell script: $(System.ArtifactsDirectory)/New-StorageAccountSASToken.ps1'
-  ##TO DO: reinstate condition
-  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     azureSubscription: SFA-DIG-Prod-ARM
     ScriptPath: '$(System.ArtifactsDirectory)/New-StorageAccountSASToken.ps1'
@@ -91,24 +89,21 @@ steps:
   env:
     WRITE_STORAGE_ACCOUNT_CONTAINER_SAS_URI: $(WriteStorageAccountContainerSasUri)
   displayName: 'PowerShell Script: Restore tests folder, add a .env file for npm test, renamed task folder to GITVERSION_MAJORMINORPATCH'
-  ##TO DO: reinstate condition
-  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     filePath: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/scripts/Initialise-BuildResources.ps1
     arguments: -RootDirectory $(System.DefaultWorkingDirectory) -SharedStorageAccountName $(SharedStorageAccountName) -StorageAccountContainerName $(StorageAccountContainerName) -StorageAccountService $(StorageAccountService)
     pwsh: false
 - task: Npm@1
   displayName: 'npm install'
-  ##TO DO: reinstate condition
-  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)'
     verbose: false
 - script: tsc
   workingDirectory: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)
   displayName: 'Command Line Script: compile typescript application'
-  ##TO DO: reinstate condition
-  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 - task: Npm@1
   displayName: 'npm test to create the new versioned vulnerability files on the storage account'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
