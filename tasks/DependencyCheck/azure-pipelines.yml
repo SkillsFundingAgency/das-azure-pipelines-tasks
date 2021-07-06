@@ -65,7 +65,8 @@ steps:
     outputPath: '$(System.DefaultWorkingDirectory)/release/bin'
 - task: DownloadGitHubRelease@0
   displayName: 'Download GitHub Release'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  ##TO DO: reinstate condition
+  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     connection: SFA
     userRepository: 'SkillsFundingAgency/das-platform-automation'
@@ -73,7 +74,8 @@ steps:
     version: 3.0.0
 - task: AzurePowerShell@4
   displayName: 'Azure PowerShell script: $(System.ArtifactsDirectory)/New-StorageAccountSASToken.ps1'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  ##TO DO: reinstate condition
+  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     azureSubscription: SFA-DIG-Prod-ARM
     ScriptPath: '$(System.ArtifactsDirectory)/New-StorageAccountSASToken.ps1'
@@ -84,14 +86,16 @@ steps:
   env:
     WRITE_STORAGE_ACCOUNT_CONTAINER_SAS_URI: $(WriteStorageAccountContainerSasUri)
   displayName: 'PowerShell Script: Restore tests folder, add a .env file for npm test, renamed task folder to GITVERSION_MAJORMINORPATCH'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  ##TO DO: reinstate condition
+  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     filePath: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/scripts/Initialise-BuildResources.ps1
     arguments: -SharedStorageAccountName $(SharedStorageAccountName) -StorageAccountContainerName $(StorageAccountContainerName) -StorageAccountService $(StorageAccountService)
     pwsh: false
 - task: Npm@1
   displayName: 'npm install'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  ##TO DO: reinstate condition
+  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)'
     verbose: false
@@ -99,7 +103,8 @@ steps:
 - script: tsc
   workingDirectory: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)
   displayName: 'Command Line Script: tsc'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  ##TO DO: reinstate condition
+  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 - task: Npm@1
   displayName: 'npm test to create the new versioned vulnerability files on the storage account'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
