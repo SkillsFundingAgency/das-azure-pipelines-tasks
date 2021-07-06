@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
-  "id": "93ee1ebd-95c1-485e-bad4-5514e88f6c62",
+  "id": "644cc8b8-449e-4623-afb8-6c6dbab9027b",
   "name": "DependencyCheck",
   "friendlyName": "Dependency Check",
   "description": "Dependency Check task for Azure Pipelines to identify vulnerable third-party components",
