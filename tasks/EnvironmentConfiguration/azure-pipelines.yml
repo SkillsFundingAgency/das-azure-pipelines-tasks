@@ -46,30 +46,3 @@ steps:
   parameters:
     BuildDirectory: $(System.DefaultWorkingDirectory)/release/EnvironmentConfiguration
     ExtensionName: EnvironmentConfiguration
-
-
-
-
-
-
-
-
-
-- task: PackageVSTSExtension@1
-  inputs:
-    rootFolder: $(System.DefaultWorkingDirectory)/release/${{ parameters.name }}
-    outputPath: $(System.DefaultWorkingDirectory)/release/bin
-    updateTasksVersion: false
-  displayName: "Package vsix"
-- task: CopyFiles@2
-  inputs:
-    Contents: |
-      release/bin/*.vsix
-      release/$(name)/**
-    TargetFolder: "$(build.artifactstagingdirectory)/publish"
-    OverWrite: true
-  displayName: "Copy Files to: $(build.artifactstagingdirectory)"
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: "$(build.artifactstagingdirectory)/publish"
-  displayName: "Publish Artifact"
