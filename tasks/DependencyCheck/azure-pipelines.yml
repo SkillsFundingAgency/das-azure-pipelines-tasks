@@ -57,7 +57,7 @@ steps:
    }
   displayName: 'PowerShell Script: Remove node module csvtojson data#139 file'
 - task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@3
-  displayName: 'Use Node CLI for Azure DevOps (tfx-cli): v0.6.x'
+  displayName: 'Use Node CLI for Azure DevOps (tfx-cli): latest'
 - task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageAzureDevOpsExtension@3
   displayName: 'Package Extension: /tasks/DependencyCheck'
   inputs:
@@ -113,20 +113,8 @@ steps:
     workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)'
     verbose: false
     customCommand: 'test'
-- task: ms-devlabs.vsts-developer-tools-build-tasks.publish-extension-build-task.PublishAzureDevOpsExtension@3
-  displayName: 'Publish Extension'
-  ##TO DO: reinstate condition
-  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  inputs:
-    connectedServiceName: 'Visual Studio Marketplace (Apprenticeship Service)'
-    fileType: vsix
-    vsixFile: '$(System.DefaultWorkingDirectory)/release/bin/apprenticeship-service.DependencyCheck-*.vsix'
-    publisherId: apprenticeship-service
-    extensionId: 'DependencyCheck'
-    updateTasksVersion: false
-- task: PublishPipelineArtifact@1
-  condition: always()
-  displayName: 'Publish Artifact: BuildOutput'
-  inputs:
-    targetPath: $(System.DefaultWorkingDirectory)/release/bin/
-    artifactName: BuildOutput
+- template: pipeline-templates\step\extension-publish.yml
+  parameters:
+    BuildDirectory: $(System.DefaultWorkingDirectory)/release/bin
+    ExtensionName: DependencyCheck
+

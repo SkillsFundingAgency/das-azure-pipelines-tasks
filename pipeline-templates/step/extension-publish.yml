@@ -1,0 +1,26 @@
+﻿parameters:
+  BuildDirectory:
+  ExtensionName:
+
+steps:
+- task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@3
+  ##TO DO: reinstate condition
+  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Use Node CLI for Azure DevOps (tfx-cli): latest'
+- task: ms-devlabs.vsts-developer-tools-build-tasks.publish-extension-build-task.PublishAzureDevOpsExtension@3
+  ##TO DO: reinstate condition
+  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Publish Extension'
+  inputs:
+    connectedServiceName: 'Visual Studio Marketplace (Apprenticeship Service)'
+    fileType: vsix
+    vsixFile: ${{ parameters.BuildDirectory }}/apprenticeship-service.${{ parameters.ExtensionName }}-*.vsix
+    publisherId: apprenticeship-service
+    extensionId: ${{ parameters.ExtensionName }}
+    updateTasksVersion: false
+- task: PublishPipelineArtifact@1
+  condition: always()
+  displayName: 'Publish Artifact: BuildOutput'
+  inputs:
+    targetPath: $(System.DefaultWorkingDirectory)/release/bin/
+    artifactName: BuildOutput
