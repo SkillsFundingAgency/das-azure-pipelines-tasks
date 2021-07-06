@@ -6,7 +6,7 @@ trigger:
   paths:
     include:
       - tasks/DependencyCheck/*
-      - Set-Version.ps1
+      - scripts/Set-Version.ps1
 
 pr: none
 
@@ -20,15 +20,19 @@ pool:
   name: 'DAS - Continuous Integration'
 
 steps:
+# set version
 - task: UseGitVersion@5
   inputs:
     versionSpec: 5.x
     useConfigFile: true
     configFilePath: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/GitVersion.yml'
-- powershell: |
-    ./Set-Version.ps1 -TaskRoot $(System.DefaultWorkingDirectory)/tasks/DependencyCheck -Verbose
-  displayName: "Set Task Version"
-  workingDirectory: $(System.DefaultWorkingDirectory)
+- task: PowerShell@2
+  displayName: Set Task Version
+  inputs:
+    filePath: $(System.DefaultWorkingDirectory)/scripts/Set-Version.ps1
+    arguments: -TaskRoot $(System.DefaultWorkingDirectory)/tasks/DependencyCheck -Verbose
+    pwsh: false 
+# build and package application   
 - task: Npm@1
   displayName: 'npm install --production'
   inputs:
@@ -43,18 +47,18 @@ steps:
     verbose: false
     customCommand: 'install -g typescript'
 - powershell: |
-   Copy-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Destination "$(System.DefaultWorkingDirectory)/temp-tests" -Recurse
-   Remove-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
-  displayName: 'PowerShell Script: Copy tests folder contents to a temporary location and delete original folder'
+    Copy-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Destination "$(System.DefaultWorkingDirectory)/temp-tests" -Recurse
+    Remove-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
+  displayName: 'PowerShell Script: Move tests folder to a temporary location'
 - script: tsc
   workingDirectory: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task
-  displayName: 'Command Line Script: tsc'
+  displayName: 'Command Line Script: compile typescript application'
 - powershell: |
-   $FileName = "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/node_modules/csvtojson/test/data/data#139"
-   if (Test-Path $FileName)
-   {
-     Remove-Item $FileName
-   }
+    $FileName = "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/node_modules/csvtojson/test/data/data#139"
+    if (Test-Path $FileName)
+    {
+      Remove-Item $FileName
+    }
   displayName: 'PowerShell Script: Remove node module csvtojson data#139 file'
 - task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@3
   displayName: 'Use Node CLI for Azure DevOps (tfx-cli): latest'
@@ -63,6 +67,7 @@ steps:
   inputs:
     rootFolder: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck'
     outputPath: '$(System.DefaultWorkingDirectory)/release/bin'
+# upload vulnerability files
 - task: DownloadGitHubRelease@0
   displayName: 'Download GitHub Release'
   ##TO DO: reinstate condition
@@ -99,10 +104,9 @@ steps:
   inputs:
     workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)'
     verbose: false
-# Compile the typescript application
 - script: tsc
   workingDirectory: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)
-  displayName: 'Command Line Script: tsc'
+  displayName: 'Command Line Script: compile typescript application'
   ##TO DO: reinstate condition
   #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 - task: Npm@1
@@ -113,6 +117,7 @@ steps:
     workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)'
     verbose: false
     customCommand: 'test'
+# publish extension
 - template: ../../pipeline-templates/step/extension-publish.yml
   parameters:
     BuildDirectory: $(System.DefaultWorkingDirectory)/release/bin
