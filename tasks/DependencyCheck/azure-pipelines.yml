@@ -80,28 +80,15 @@ steps:
     ScriptArguments: '-ResourceGroup "$(SharedResourceGroupName)" -StorageAccount "$(SharedStorageAccountName)" -Service "$(StorageAccountService)" -ResourceType "$(StorageAccountResourceType)" -Permissions "$(StorageAccountPermissions)" -ExpiryInMinutes "$(SasUriExpiryInMinutes)" -OutputVariable "WriteStorageAccountContainerSasUri"'
     azurePowerShellVersion: LatestVersion
     pwsh: true
-- powershell: |
-   Copy-Item "$(System.DefaultWorkingDirectory)/temp-tests" -Destination "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
-   $Path = "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task"
-   $Value = @"
-   enableVulnerabilityFilesMaintenance=true
-   writeStorageAccountContainerSasUri=https://$(SharedStorageAccountName).$(StorageAccountService).core.windows.net/$(StorageAccountContainerName)$($ENV:WRITE_STORAGE_ACCOUNT_CONTAINER_SAS_URI)
-   logAnalyticsWorkspaceId=placeholder
-   logAnalyticsWorkspaceKey=placeholder
-   enableSelfHostedVulnerabilityFiles=placeholder
-   readStorageAccountContainerSasUri=placeholder
-   scanPath=placeholder
-   excludedScanPathPatterns=placeholder
-   severityThreshold=placeholder
-   dependencyCheckDashboardUrl=placeholder
-   "@
-   New-Item -Path $Path -Name ".env" -Value $Value
-   Get-Content -Path "$($Path)/.env"
-   Rename-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task" "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$($ENV:GITVERSION_MAJORMINORPATCH)"
+- task: PowerShell@2
   env:
     WRITE_STORAGE_ACCOUNT_CONTAINER_SAS_URI: $(WriteStorageAccountContainerSasUri)
   displayName: 'PowerShell Script: Restore tests folder, add a .env file for npm test, renamed task folder to GITVERSION_MAJORMINORPATCH'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  inputs:
+    filePath: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/scripts/Initialise-BuildResources.ps1
+    arguments: -SharedStorageAccountName $(SharedStorageAccountName) -StorageAccountContainerName $(StorageAccountContainerName) -StorageAccountService $(StorageAccountService)
+    pwsh: false
 - task: Npm@1
   displayName: 'npm install'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
