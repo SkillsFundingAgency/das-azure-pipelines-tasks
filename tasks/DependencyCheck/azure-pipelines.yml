@@ -113,7 +113,7 @@ steps:
     workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)'
     verbose: false
     customCommand: 'test'
-- template: pipeline-templates\step\extension-publish.yml
+- template: ../../pipeline-templates/step/extension-publish.yml
   parameters:
     BuildDirectory: $(System.DefaultWorkingDirectory)/release/bin
     ExtensionName: DependencyCheck
