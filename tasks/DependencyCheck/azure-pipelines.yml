@@ -100,7 +100,8 @@ steps:
   #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 - task: Npm@1
   displayName: 'npm test to create the new versioned vulnerability files on the storage account'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  ##TO DO: reinstate condition
+  #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     command: custom
     workingDir: '$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/$(GITVERSION.MAJORMINORPATCH)'
