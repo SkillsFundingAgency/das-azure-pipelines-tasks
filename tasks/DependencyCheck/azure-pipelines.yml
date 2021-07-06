@@ -90,7 +90,7 @@ steps:
   #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     filePath: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/scripts/Initialise-BuildResources.ps1
-    arguments: -SharedStorageAccountName $(SharedStorageAccountName) -StorageAccountContainerName $(StorageAccountContainerName) -StorageAccountService $(StorageAccountService)
+    arguments: -RootDirectory $(System.DefaultWorkingDirectory) -SharedStorageAccountName $(SharedStorageAccountName) -StorageAccountContainerName $(StorageAccountContainerName) -StorageAccountService $(StorageAccountService)
     pwsh: false
 - task: Npm@1
   displayName: 'npm install'
