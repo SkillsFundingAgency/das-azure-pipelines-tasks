@@ -20,5 +20,5 @@ steps:
   condition: always()
   displayName: 'Publish Artifact: BuildOutput'
   inputs:
-    targetPath: $(System.DefaultWorkingDirectory)/release/bin/
+    targetPath: ${{ parameters.BuildDirectory }}
     artifactName: BuildOutput
