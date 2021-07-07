@@ -37,7 +37,7 @@ steps:
   inputs:
     filePath: $(ReleaseOutputDirectory)/tests/Start-UnitTest.ps1
     failOnStderr: true
-    pwsh: false
+    pwsh: true
     workingDirectory: $(System.DefaultWorkingDirectory)
 - task: PublishTestResults@2
   inputs:
