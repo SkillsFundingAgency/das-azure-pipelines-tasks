@@ -137,7 +137,7 @@ if ($Build.IsPresent -and $ENV:BUILD_BUILDNUMBER) {
 }
 
 $null = New-Item -Path $ReleaseOutputDirectory -ItemType Directory -Force -ErrorAction SilentlyContinue
-Copy-Item -Path $ResolvedTaskRoot -Destination $ReleaseOutputDirectory -Exclude $ReleaseOutputDirectory\* -Recurse -Force -Verbose
+Copy-Item -Path $ResolvedTaskRoot\* -Destination $ReleaseOutputDirectory -Recurse -Force -Verbose
 
 if (!$SkipRestore.IsPresent) {
 
