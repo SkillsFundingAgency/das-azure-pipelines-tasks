@@ -131,7 +131,7 @@ try {
             }
         }
 
-        Remove-Item -Path "$PSScriptRoot/Release" -Force -Recurse -ErrorAction SilentlyContinue
+        Remove-Item -Path $ReleaseTaskRoot -Force -Recurse -ErrorAction SilentlyContinue
     }
 
     if ($Build.IsPresent -and $ENV:BUILD_BUILDNUMBER) {
@@ -139,7 +139,7 @@ try {
     }
 
     $null = New-Item -Path $ReleaseTaskRoot -ItemType Directory -Force -ErrorAction SilentlyContinue
-    Copy-Item -Path $ResolvedTaskRoot -Destination "$PSScriptRoot/Release" -Recurse -Force
+    Copy-Item -Path $ResolvedTaskRoot -Destination $ReleaseTaskRoot -Recurse -Force
 
     if (!$SkipRestore.IsPresent) {
 
