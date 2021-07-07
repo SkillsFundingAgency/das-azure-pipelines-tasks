@@ -25,7 +25,7 @@ steps:
   displayName: Build Task
   inputs:
     filePath: $(System.DefaultWorkingDirectory)/scripts/Build-Task.ps1
-    arguments:  -Build -TaskRoot $(System.DefaultWorkingDirectory)/tasks/EnvironmentConfiguration
+    arguments:  -Build -TaskRoot $(System.DefaultWorkingDirectory)/tasks/EnvironmentConfiguration -Verbose
     failOnStderr: false
     pwsh: false
     workingDirectory: $(System.DefaultWorkingDirectory)
