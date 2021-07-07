@@ -95,150 +95,141 @@ function Set-Version {
     }
 }
 
-try {
+# --- Ensure that nuget is available
+$null = Register-PackageSource -ProviderName Nuget -Name nuget.org -Location https://www.nuget.org/api/v2 -Trusted:$true -Force
 
-    # --- Ensure that nuget is available
-    $null = Register-PackageSource -ProviderName Nuget -Name nuget.org -Location https://www.nuget.org/api/v2 -Trusted:$true -Force
+Write-Verbose -Message "Resolving common paths.."
+$ResolvedTaskRoot = (Resolve-Path -Path "$TaskRoot").Path
+$ConfigPath = "$($ResolvedTaskRoot)/dependency.json"
+$PackageTemp = "$($ENV:Temp)/$((New-Guid).ToString())"
+$ReleaseTaskRoot = "$TaskRoot/Release"
 
-    Write-Verbose -Message "Resolving common paths.."
-    $ResolvedTaskRoot = (Resolve-Path -Path "$TaskRoot").Path
-    $ConfigPath = "$($ResolvedTaskRoot)/dependency.json"
-    $PackageTemp = "$($ENV:Temp)/$((New-Guid).ToString())"
-    $ReleaseTaskRoot = "$TaskRoot/Release"
+$null = New-Item -Path $PackageTemp -ItemType Directory -Force
+Write-Verbose -Message "ResolvedTaskRoot: $ResolvedTaskRoot"
+Write-Verbose -Message "ReleaseTaskRoot: $ReleaseTaskRoot"
+Write-Verbose -Message "ConfigPath: $ConfigPath"
 
-    $null = New-Item -Path $PackageTemp -ItemType Directory -Force
-    Write-Verbose -Message "ResolvedTaskRoot: $ResolvedTaskRoot"
-    Write-Verbose -Message "ReleaseTaskRoot: $ReleaseTaskRoot"
-    Write-Verbose -Message "ConfigPath: $ConfigPath"
+if (!$ConfigPath) {
+    throw "Could not find dependency.json at $ConfigPath"
+}
 
-    if (!$ConfigPath) {
-        throw "Could not find dependency.json at $ConfigPath"
-    }
+Write-Verbose -Message "Retrieving config definition from $ConfigPath"
+$Config = (Get-Content -Path $ConfigPath -Raw) | ConvertFrom-Json
 
-    Write-Verbose -Message "Retrieving config definition from $ConfigPath"
-    $Config = (Get-Content -Path $ConfigPath -Raw) | ConvertFrom-Json
+if ($Clean.IsPresent -and $SkipRestore.IsPresent) {
+    Write-Warning -Message "Don't use Clean and SkipRestore together. Clean task will now be skipped!"
+}
 
-    if ($Clean.IsPresent -and $SkipRestore.IsPresent) {
-        Write-Warning -Message "Don't use Clean and SkipRestore together. Clean task will now be skipped!"
-    }
-
-    if ($Clean.IsPresent -and !$SkipRestore.IsPresent) {
-        Write-Host "Cleaning package directories:"
-        $Config.Include | Select-Object -Property Path -Unique | ForEach-Object {
-            if ($_.Path) {
-                Write-Host " - $($_.Path)"
-                Get-ChildItem -Path "$($ReleaseTaskRoot)/$($_.Path)" -Recurse | Remove-Item -Recurse -Force
-            }
+if ($Clean.IsPresent -and !$SkipRestore.IsPresent) {
+    Write-Host "Cleaning package directories:"
+    $Config.Include | Select-Object -Property Path -Unique | ForEach-Object {
+        if ($_.Path) {
+            Write-Host " - $($_.Path)"
+            Get-ChildItem -Path "$($ReleaseTaskRoot)/$($_.Path)" -Recurse | Remove-Item -Recurse -Force
         }
-
-        Remove-Item -Path $ReleaseTaskRoot -Force -Recurse -ErrorAction SilentlyContinue
     }
 
-    if ($Build.IsPresent -and $ENV:BUILD_BUILDNUMBER) {
-        Set-Version -TaskRoot $ResolvedTaskRoot
-    }
+    Remove-Item -Path $ReleaseTaskRoot -Force -Recurse -ErrorAction SilentlyContinue
+}
 
-    $null = New-Item -Path $ReleaseTaskRoot -ItemType Directory -Force -ErrorAction SilentlyContinue
-    Copy-Item -Path $ResolvedTaskRoot -Destination $ReleaseTaskRoot -Recurse -Force
+if ($Build.IsPresent -and $ENV:BUILD_BUILDNUMBER) {
+    Set-Version -TaskRoot $ResolvedTaskRoot
+}
 
-    if (!$SkipRestore.IsPresent) {
+$null = New-Item -Path $ReleaseTaskRoot -ItemType Directory -Force -ErrorAction SilentlyContinue
+Copy-Item -Path $ResolvedTaskRoot -Destination $ReleaseTaskRoot -Recurse -Force
 
-        foreach ($Package in $Config.Include | Sort-Object -Property Type) {
-            Write-Verbose -Message "Processing package dependency $($Package.Name)"
-            Write-Verbose -Message "Clean package directories: $($Clean.IsPresent)"
+if (!$SkipRestore.IsPresent) {
 
-            Write-Verbose -Message "Resolving package path"
-            [System.IO.FileInfo]$ResolvedPackagePath = "$($ReleaseTaskRoot)/$($Package.Path)"
-            Write-Verbose -Message "ResolvedPackagePath: $ReleaseTaskRoot"
+    foreach ($Package in $Config.Include | Sort-Object -Property Type) {
+        Write-Verbose -Message "Processing package dependency $($Package.Name)"
+        Write-Verbose -Message "Clean package directories: $($Clean.IsPresent)"
 
-            switch ($Package.Type) {
-                'PSGallery' {
-                    $PackageInstallDirectory = "$PackageTemp/$($Package.Name)"
+        Write-Verbose -Message "Resolving package path"
+        [System.IO.FileInfo]$ResolvedPackagePath = "$($ReleaseTaskRoot)/$($Package.Path)"
+        Write-Verbose -Message "ResolvedPackagePath: $ReleaseTaskRoot"
 
-                    $SaveModuleParameters = @{
-                        Name            = $Package.Name
-                        Path            = $PackageTemp
-                        RequiredVersion = $Package.Version
-                        Force           = $true
-                    }
+        switch ($Package.Type) {
+            'PSGallery' {
+                $PackageInstallDirectory = "$PackageTemp/$($Package.Name)"
 
-                    Write-Host "[PSGallery] Saving module $($Package.Name) to $PackageTemp "
-                    Save-Module @SaveModuleParameters
-
-                    if ($Package.Copy) {
-                        $Package.Copy | ForEach-Object {
-                            Write-Host "[PSGallery] Copying module $($Package.Name) to $($Package.Path)"
-                            Copy-Item -Path $PackageInstallDirectory/$_ -Destination "$ResolvedPackagePath/$($Package.Name)" -Recurse -Force
-                        }
-                    }
-
-                    break
+                $SaveModuleParameters = @{
+                    Name            = $Package.Name
+                    Path            = $PackageTemp
+                    RequiredVersion = $Package.Version
+                    Force           = $true
                 }
-                'Nuget' {
-                    $PackageSources = @(Get-PackageSource | Where-Object { $_.Name -like "*nuget*" })
-                    $PackageDestination = "$PackageTemp/$($Package.Name).$($Package.Version)"
 
-                    $InstallPackageParameters = @{
-                        Name             = $Package.Name
-                        Destination      = $PackageTemp
-                        SkipDependencies = $true
-                        ForceBootstrap   = $true
-                        RequiredVersion  = $Package.Version
-                        Force            = $true
-                        Source           = $PackageSources[0].Name
-                    }
+                Write-Host "[PSGallery] Saving module $($Package.Name) to $PackageTemp "
+                Save-Module @SaveModuleParameters
 
-                    Write-Host "[NuGet] Installing package $($Package.Name) to $($PackageTemp)"
-                    $null = Install-Package @InstallPackageParameters
-
-                    if ($Package.Copy) {
-                        $null = New-Item -Path $ResolvedPackagePath -ItemType Directory -ErrorAction SilentlyContinue
-                        $Package.Copy | ForEach-Object {
-                            Write-Host "[NuGet] Copying dependency $_ to $ResolvedPackagePath"
-                            Copy-Item -Path $PackageDestination/$_ -Destination $ResolvedPackagePath -Recurse -Force
-                        }
-                    }
-
-                    break
-                }
-                'GitHub' {
-                    $RepositoryUrl = "https://github.com/$($Package.Name).git"
-                    $RepositoryDestination = "$PackageTemp/$($Package.Name.Split("/")[1])"
-                    Write-Host "[GitHub] Processing $($RepositoryUrl)"
-                    & git.exe clone `
-                        --depth 1 `
-                        --no-checkout `
-                        $RepositoryUrl `
-                        $RepositoryDestination
-
-                    if ($Package.Copy) {
-                        $Package.Copy | ForEach-Object {
-                            & git.exe -C $RepositoryDestination checkout HEAD "$_/*"
-                            Write-Host "[GitHub] Copying dependency $_ to $($Package.Path)"
-                            Copy-Item -Path $RepositoryDestination/$_ -Destination $ResolvedPackagePath -Recurse -Force
-                        }
-                    }
-                    break
-                }
-                'Local' {
-                    if ($Package.Copy) {
-                        $Package.Copy | ForEach-Object {
-                            Write-Host "[Local] Copying dependency $_ to $($Package.Path)"
-                            Copy-Item -Path $ResolvedTaskRoot/$_ -Destination $ResolvedPackagePath -Recurse -Force
-                        }
+                if ($Package.Copy) {
+                    $Package.Copy | ForEach-Object {
+                        Write-Host "[PSGallery] Copying module $($Package.Name) to $($Package.Path)"
+                        Copy-Item -Path $PackageInstallDirectory/$_ -Destination "$ResolvedPackagePath/$($Package.Name)" -Recurse -Force
                     }
                 }
-                'Default' {
-                    throw "Unknown package type: $($Package.Type). Supported package types are [GitHub, NuGet, PowerShellGallery]"
+
+                break
+            }
+            'Nuget' {
+                $PackageSources = @(Get-PackageSource | Where-Object { $_.Name -like "*nuget*" })
+                $PackageDestination = "$PackageTemp/$($Package.Name).$($Package.Version)"
+
+                $InstallPackageParameters = @{
+                    Name             = $Package.Name
+                    Destination      = $PackageTemp
+                    SkipDependencies = $true
+                    ForceBootstrap   = $true
+                    RequiredVersion  = $Package.Version
+                    Force            = $true
+                    Source           = $PackageSources[0].Name
                 }
+
+                Write-Host "[NuGet] Installing package $($Package.Name) to $($PackageTemp)"
+                $null = Install-Package @InstallPackageParameters
+
+                if ($Package.Copy) {
+                    $null = New-Item -Path $ResolvedPackagePath -ItemType Directory -ErrorAction SilentlyContinue
+                    $Package.Copy | ForEach-Object {
+                        Write-Host "[NuGet] Copying dependency $_ to $ResolvedPackagePath"
+                        Copy-Item -Path $PackageDestination/$_ -Destination $ResolvedPackagePath -Recurse -Force
+                    }
+                }
+
+                break
+            }
+            'GitHub' {
+                $RepositoryUrl = "https://github.com/$($Package.Name).git"
+                $RepositoryDestination = "$PackageTemp/$($Package.Name.Split("/")[1])"
+                Write-Host "[GitHub] Processing $($RepositoryUrl)"
+                & git.exe clone `
+                    --depth 1 `
+                    --no-checkout `
+                    $RepositoryUrl `
+                    $RepositoryDestination
+
+                if ($Package.Copy) {
+                    $Package.Copy | ForEach-Object {
+                        & git.exe -C $RepositoryDestination checkout HEAD "$_/*"
+                        Write-Host "[GitHub] Copying dependency $_ to $($Package.Path)"
+                        Copy-Item -Path $RepositoryDestination/$_ -Destination $ResolvedPackagePath -Recurse -Force
+                    }
+                }
+                break
+            }
+            'Local' {
+                if ($Package.Copy) {
+                    $Package.Copy | ForEach-Object {
+                        Write-Host "[Local] Copying dependency $_ to $($Package.Path)"
+                        Copy-Item -Path $ResolvedTaskRoot/$_ -Destination $ResolvedPackagePath -Recurse -Force
+                    }
+                }
+            }
+            'Default' {
+                throw "Unknown package type: $($Package.Type). Supported package types are [GitHub, NuGet, PowerShellGallery]"
             }
         }
     }
 }
-catch {
-    $PSCmdlet.ThrowTerminatingError($_)
-}
-finally {
-    Write-Verbose -Message "Cleaning temp directory $PackageTemp"
-    Remove-Item -Path $PackageTemp -Recurse -Force
-}
+
