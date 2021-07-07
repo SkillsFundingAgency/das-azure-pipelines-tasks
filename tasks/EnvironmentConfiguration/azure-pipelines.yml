@@ -16,7 +16,7 @@ workspace:
   clean: all
 
 pool:
-  name: 'DAS - Continuous Deployment Agents'
+  name: 'DAS - Continuous Integration'
   demands: Agent.OS -equals Windows_NT
 
 variables:
