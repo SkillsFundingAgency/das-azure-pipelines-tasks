@@ -48,6 +48,8 @@
 Param(
     [Parameter(Mandatory = $true)]
     [System.Io.FileInfo]$TaskRoot,
+    [Parameter(Mandatory = $true)]
+    [System.Io.FileInfo]$ReleaseOutputDirectory,
     [Parameter(Mandatory = $false)]
     [switch]$Clean,
     [Parameter(Mandatory = $false)]
@@ -102,11 +104,9 @@ Write-Verbose -Message "Resolving common paths.."
 $ResolvedTaskRoot = (Resolve-Path -Path "$TaskRoot").Path
 $ConfigPath = "$($ResolvedTaskRoot)/dependency.json"
 $PackageTemp = "$($ENV:Temp)/$((New-Guid).ToString())"
-$ReleaseTaskRoot = "$ResolvedTaskRoot/Release"
 
 $null = New-Item -Path $PackageTemp -ItemType Directory -Force
 Write-Verbose -Message "ResolvedTaskRoot: $ResolvedTaskRoot"
-Write-Verbose -Message "ReleaseTaskRoot: $ReleaseTaskRoot"
 Write-Verbose -Message "ConfigPath: $ConfigPath"
 
 if (!$ConfigPath) {
@@ -125,19 +125,19 @@ if ($Clean.IsPresent -and !$SkipRestore.IsPresent) {
     $Config.Include | Select-Object -Property Path -Unique | ForEach-Object {
         if ($_.Path) {
             Write-Host " - $($_.Path)"
-            Get-ChildItem -Path "$($ReleaseTaskRoot)/$($_.Path)" -Recurse | Remove-Item -Recurse -Force
+            Get-ChildItem -Path "$($ReleaseOutputDirectory)/$($_.Path)" -Recurse | Remove-Item -Recurse -Force
         }
     }
 
-    Remove-Item -Path $ReleaseTaskRoot -Force -Recurse -ErrorAction SilentlyContinue
+    Remove-Item -Path $ReleaseOutputDirectory -Force -Recurse -ErrorAction SilentlyContinue
 }
 
 if ($Build.IsPresent -and $ENV:BUILD_BUILDNUMBER) {
     Set-Version -TaskRoot $ResolvedTaskRoot
 }
 
-$null = New-Item -Path $ReleaseTaskRoot -ItemType Directory -Force -ErrorAction SilentlyContinue
-Copy-Item -Path $ResolvedTaskRoot -Destination $ReleaseTaskRoot -Exclude $ReleaseTaskRoot -Recurse -Force
+$null = New-Item -Path $ReleaseOutputDirectory -ItemType Directory -Force -ErrorAction SilentlyContinue
+Copy-Item -Path $ResolvedTaskRoot -Destination $ReleaseOutputDirectory -Exclude $ReleaseOutputDirectory\* -Recurse -Force -Verbose
 
 if (!$SkipRestore.IsPresent) {
 
@@ -146,8 +146,8 @@ if (!$SkipRestore.IsPresent) {
         Write-Verbose -Message "Clean package directories: $($Clean.IsPresent)"
 
         Write-Verbose -Message "Resolving package path"
-        [System.IO.FileInfo]$ResolvedPackagePath = "$($ReleaseTaskRoot)/$($Package.Path)"
-        Write-Verbose -Message "ResolvedPackagePath: $ReleaseTaskRoot"
+        [System.IO.FileInfo]$ResolvedPackagePath = "$($ReleaseOutputDirectory)/$($Package.Path)"
+        Write-Verbose -Message "ResolvedPackagePath: $ReleaseOutputDirectory"
 
         switch ($Package.Type) {
             'PSGallery' {

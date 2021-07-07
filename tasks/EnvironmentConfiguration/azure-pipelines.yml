@@ -19,31 +19,34 @@ pool:
   name: 'DAS - Continuous Integration'
   demands: Agent.OS -equals Windows_NT
 
+variables:
+  ReleaseOutputDirectory: $(System.DefaultWorkingDirectory)/Release/EnvironmentConfiguration
+
 steps:
 # build and test extension
 - task: PowerShell@2
   displayName: Build Task
   inputs:
     filePath: $(System.DefaultWorkingDirectory)/scripts/Build-Task.ps1
-    arguments:  -Build -TaskRoot $(System.DefaultWorkingDirectory)/tasks/EnvironmentConfiguration -Verbose
+    arguments:  -Build -TaskRoot $(System.DefaultWorkingDirectory)/tasks/EnvironmentConfiguration -ReleaseOutputDirectory $(ReleaseOutputDirectory)  -Verbose
     failOnStderr: false
     pwsh: false
     workingDirectory: $(System.DefaultWorkingDirectory)
 - task: PowerShell@2
   displayName: Test
   inputs:
-    filePath: $(System.DefaultWorkingDirectory)/tasks/EnvironmentConfiguration/Release/tests/Start-UnitTest.ps1
+    filePath: $(ReleaseOutputDirectory)/tests/Start-UnitTest.ps1
     failOnStderr: true
     pwsh: false
     workingDirectory: $(System.DefaultWorkingDirectory)
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: "NUnit"
-    testResultsFiles: $(System.DefaultWorkingDirectory)/tasks/EnvironmentConfiguration/Release/tests/Test-Pester.XML
+    testResultsFiles: $(ReleaseOutputDirectory)/tests/Test-Pester.XML
   displayName: "Publish results"
   condition: succeededOrFailed()
 # publish extension
 - template: ../../pipeline-templates/step/extension-publish.yml
   parameters:
-    BuildDirectory: $(System.DefaultWorkingDirectory)/tasks/EnvironmentConfiguration/Release
+    BuildDirectory: $(ReleaseOutputDirectory)
     ExtensionName: EnvironmentConfiguration
