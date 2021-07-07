@@ -102,7 +102,7 @@ Write-Verbose -Message "Resolving common paths.."
 $ResolvedTaskRoot = (Resolve-Path -Path "$TaskRoot").Path
 $ConfigPath = "$($ResolvedTaskRoot)/dependency.json"
 $PackageTemp = "$($ENV:Temp)/$((New-Guid).ToString())"
-$ReleaseTaskRoot = "$TaskRoot/Release"
+$ReleaseTaskRoot = "$ResolvedTaskRoot/Release"
 
 $null = New-Item -Path $PackageTemp -ItemType Directory -Force
 Write-Verbose -Message "ResolvedTaskRoot: $ResolvedTaskRoot"
