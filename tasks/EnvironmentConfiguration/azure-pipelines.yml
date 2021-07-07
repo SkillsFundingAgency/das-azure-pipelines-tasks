@@ -32,7 +32,7 @@ steps:
 - task: PowerShell@2
   displayName: Test
   inputs:
-    filePath: $(System.DefaultWorkingDirectory)/release/EnvironmentConfiguration/tests/Start-UnitTest.ps1
+    filePath: $(System.DefaultWorkingDirectory)/EnvironmentConfiguration/Release/tests/Start-UnitTest.ps1
     failOnStderr: true
     pwsh: false
     workingDirectory: $(System.DefaultWorkingDirectory)

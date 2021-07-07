@@ -104,8 +104,7 @@ try {
     $ResolvedTaskRoot = (Resolve-Path -Path "$TaskRoot").Path
     $ConfigPath = "$($ResolvedTaskRoot)/dependency.json"
     $PackageTemp = "$($ENV:Temp)/$((New-Guid).ToString())"
-    $TaskName = (Get-Item -Path "$ResolvedTaskRoot").Name
-    $ReleaseTaskRoot = "$PSScriptRoot/Release/$TaskName"
+    $ReleaseTaskRoot = "$TaskRoot/Release"
 
     $null = New-Item -Path $PackageTemp -ItemType Directory -Force
     Write-Verbose -Message "ResolvedTaskRoot: $ResolvedTaskRoot"
