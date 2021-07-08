@@ -45,6 +45,12 @@ steps:
     testResultsFiles: $(ReleaseOutputDirectory)/tests/Test-Pester.XML
   displayName: "Publish results"
   condition: succeededOrFailed()
+- task: PackageVSTSExtension@1
+  inputs:
+    rootFolder: $(ReleaseOutputDirectory)
+    outputPath: $(ReleaseOutputDirectory)
+    updateTasksVersion: false
+  displayName: "Package vsix"
 # publish extension
 - template: ../../pipeline-templates/step/extension-publish.yml
   parameters:
