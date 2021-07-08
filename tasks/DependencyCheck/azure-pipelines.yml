@@ -91,7 +91,7 @@ steps:
   displayName: 'PowerShell Script: Restore tests folder, add a .env file for npm test, renamed task folder to GITVERSION_MAJORMINORPATCH'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
-    filePath: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/scripts/Initialise-BuildResources.ps1
+    filePath: $(System.DefaultWorkingDirectory)/tasks/DependencyCheck/scripts/Initialise-TaskExecutionResources.ps1
     arguments: -RootDirectory $(System.DefaultWorkingDirectory) -SharedStorageAccountName $(SharedStorageAccountName) -StorageAccountContainerName $(StorageAccountContainerName) -StorageAccountService $(StorageAccountService)
     pwsh: false
 - task: Npm@1
