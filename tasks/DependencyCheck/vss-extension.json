@@ -3,7 +3,7 @@
   "id": "DependencyCheck",
   "name": "Dependency Check",
   "version": "Task version set in azure-pipelines.yml",
-  "publisher": "esfadevops",
+  "publisher": "apprenticeship-service",
   "targets": [
     {
       "id": "Microsoft.VisualStudio.Services"
