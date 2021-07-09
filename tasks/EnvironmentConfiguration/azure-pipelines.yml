@@ -45,6 +45,8 @@ steps:
     testResultsFiles: $(ReleaseOutputDirectory)/tests/Test-Pester.XML
   displayName: "Publish results"
   condition: succeededOrFailed()
+- task: TfxInstaller@3
+  displayName: 'Use Node CLI for Azure DevOps (tfx-cli): latest'
 - task: PackageVSTSExtension@1
   inputs:
     rootFolder: $(ReleaseOutputDirectory)
