@@ -62,4 +62,4 @@ steps:
 - template: ../../pipeline-templates/step/extension-publish.yml
   parameters:
     BuildDirectory: $(ReleaseOutputDirectory)
-    ExtensionName: EnvironmentConfiguration
+    ExtensionName: GenerateEnvironmentConfiguration
