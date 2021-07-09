@@ -45,6 +45,10 @@ steps:
     testResultsFiles: $(ReleaseOutputDirectory)/tests/Test-Pester.XML
   displayName: "Publish results"
   condition: succeededOrFailed()
+# tfx-cli throws circular depedency warning which is not tolerated in newer versions of node
+- task: NodeTool@0
+  inputs:
+    versionSpec: '12.x' 
 - task: TfxInstaller@3
   displayName: 'Use Node CLI for Azure DevOps (tfx-cli): latest'
 - task: PackageVSTSExtension@1
