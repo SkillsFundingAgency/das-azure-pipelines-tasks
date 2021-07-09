@@ -45,7 +45,7 @@ steps:
     testResultsFiles: $(ReleaseOutputDirectory)/tests/Test-Pester.XML
   displayName: "Publish results"
   condition: succeededOrFailed()
-# tfx-cli throws circular depedency warning which is not tolerated in newer versions of node
+# tfx-cli throws circular depedency warning which is not tolerated in newer versions of node - https://github.com/microsoft/tfs-cli/issues/360
 - task: NodeTool@0
   inputs:
     versionSpec: '12.x' 
