@@ -3,6 +3,12 @@
   ExtensionName:
 
 steps:
+# tfx-cli throws circular depedency warning which is not tolerated in newer versions of node - https://github.com/microsoft/tfs-cli/issues/360
+- task: NodeTool@0
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Use node.js: 12.x'
+  inputs:
+    versionSpec: '12.x' 
 - task: TfxInstaller@3
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: 'Use Node CLI for Azure DevOps (tfx-cli): latest'

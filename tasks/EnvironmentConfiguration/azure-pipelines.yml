@@ -45,6 +45,19 @@ steps:
     testResultsFiles: $(ReleaseOutputDirectory)/tests/Test-Pester.XML
   displayName: "Publish results"
   condition: succeededOrFailed()
+# tfx-cli throws circular depedency warning which is not tolerated in newer versions of node - https://github.com/microsoft/tfs-cli/issues/360
+- task: NodeTool@0
+  displayName: 'Use node.js: 12.x'
+  inputs:
+    versionSpec: '12.x' 
+- task: TfxInstaller@3
+  displayName: 'Use Node CLI for Azure DevOps (tfx-cli): latest'
+- task: PackageVSTSExtension@1
+  inputs:
+    rootFolder: $(ReleaseOutputDirectory)
+    outputPath: $(ReleaseOutputDirectory)
+    updateTasksVersion: false
+  displayName: "Package vsix"
 # publish extension
 - template: ../../pipeline-templates/step/extension-publish.yml
   parameters:
