@@ -41,11 +41,11 @@ steps:
     verbose: false
     customCommand: 'install --production'
 - task: Npm@1
-  displayName: 'npm install -g typescript'
+  displayName: 'npm install -g typescript@4.3.5'
   inputs:
     command: custom
     verbose: false
-    customCommand: 'install -g typescript'
+    customCommand: 'install -g typescript@4.3.5'
 - powershell: |
     Copy-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Destination "$(System.DefaultWorkingDirectory)/temp-tests" -Recurse
     Remove-Item "$(System.DefaultWorkingDirectory)/tasks/DependencyCheck/task/tests" -Recurse
