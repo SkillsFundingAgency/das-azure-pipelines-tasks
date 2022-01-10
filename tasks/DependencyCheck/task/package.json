@@ -38,7 +38,8 @@
     "eslint-plugin-react": "^7.18.0",
     "eslint-plugin-react-hooks": "^1.7.0",
     "sync-request": "^6.1.0",
-    "tfx-cli": "^0.9.2",
-    "typescript": "^3.7.5"
+    "tfx-cli": "^0.10.0",
+    "typescript": "^3.7.5",
+    "validator": "^13.7.0"
   }
 }
