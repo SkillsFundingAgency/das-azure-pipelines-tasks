@@ -1,11 +1,1 @@
-node_modules
-data
-!data/.gitkeep
-.taskkey
-dependency-check-report.csv
-*.js
-*.js.map
-*.js.log
-*.vsix
-.env
 .vscode
