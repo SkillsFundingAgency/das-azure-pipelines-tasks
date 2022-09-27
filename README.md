@@ -1,3 +1,10 @@
+# <span style="color:red">**DEPRECATED**</span>
+
+## The Environment Configuration Azure DevOps task has been superceeded by the Azure DevOps Pipeline generate-config step template found [here](https://github.com/SkillsFundingAgency/das-platform-building-blocks/blob/master/azure-pipelines-templates/deploy/step/generate-config.yml).
+## This repo exists to support legacy release definitions only.
+
+
+
 # Azure Pipelines tasks
 
 This repository contains custom Azure Pipelines tasks.
